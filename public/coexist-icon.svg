@@ -1,0 +1,32 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#EC4899;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="url(#iconGradient)"/>
+  
+  <!-- Simple dove in center -->
+  <g transform="translate(32, 32)">
+    <!-- Dove body -->
+    <ellipse cx="0" cy="2" rx="8" ry="5" fill="white" opacity="0.9"/>
+    
+    <!-- Dove wing -->
+    <path d="M -5 0 Q -12 -3 -10 -8 Q -6 -5 -5 0 Z" fill="white" opacity="0.8"/>
+    
+    <!-- Dove head -->
+    <circle cx="-5" cy="0" r="2.5" fill="white"/>
+    
+    <!-- Olive branch -->
+    <path d="M -8 0 Q -12 -2 -14 0" stroke="#10B981" stroke-width="1" fill="none"/>
+    <circle cx="-11" cy="-1" r="0.5" fill="#10B981"/>
+  </g>
+  
+  <!-- Small heart at bottom -->
+  <path d="M 32 45 C 29 42, 25 42, 27 37 C 29 35, 32 37, 32 39 C 32 37, 35 35, 37 37 C 39 42, 35 42, 32 45 Z" 
+        fill="#F87171" 
+        opacity="0.8"/>
+</svg>
