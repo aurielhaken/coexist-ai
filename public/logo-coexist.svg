@@ -1,0 +1,22 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Cercle principal -->
+  <circle cx="30" cy="30" r="25" fill="url(#logoGradient)" opacity="0.1"/>
+  <circle cx="30" cy="30" r="20" fill="url(#logoGradient)"/>
+  
+  <!-- Symbole de paix -->
+  <path d="M20 30 L40 30 M30 20 L30 40 M25 25 L35 35 M35 25 L25 35" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Texte COEXIST.AI -->
+  <text x="70" y="25" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="url(#logoGradient)">COEXIST</text>
+  <text x="70" y="45" font-family="Arial, sans-serif" font-size="12" font-weight="normal" fill="#6B7280">.AI</text>
+  
+  <!-- Sous-titre -->
+  <text x="70" y="55" font-family="Arial, sans-serif" font-size="8" fill="#9CA3AF">Assistant de Sagesse Universelle</text>
+</svg>

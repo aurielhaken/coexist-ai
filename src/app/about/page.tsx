@@ -1,49 +1,61 @@
 import { LogoFull } from '../../components/Logo';
 import Link from 'next/link';
-import { ArrowLeft, Heart, Users, MessageCircle, Shield, Globe, Lightbulb } from 'lucide-react';
+import { ArrowLeft, Heart, Users, MessageCircle, Shield, Globe, Lightbulb, Sparkles } from 'lucide-react';
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-black relative overflow-hidden">
+      {/* Background Effects - Tons sombres uniquement */}
+      <div className="pointer-events-none absolute -top-32 -left-32 h-72 w-72 rounded-full bg-gray-800/30 blur-3xl"></div>
+      <div className="pointer-events-none absolute top-64 -right-24 h-96 w-96 rounded-full bg-gray-700/20 blur-3xl"></div>
+      <div className="pointer-events-none absolute bottom-0 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-gray-900/40 blur-3xl"></div>
+      
       {/* Header */}
-      <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="relative z-10 border-b border-gray-800 bg-gray-900/80 backdrop-blur-xl">
+        <div className="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
           <Link 
             href="/" 
-            className="flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors"
+            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
           >
             <ArrowLeft size={20} />
             <span>Retour au Chat</span>
           </Link>
-          <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+          <h1 className="text-xl font-semibold text-white">
             À propos de COEXIST.AI
           </h1>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-12">
+      <main className="relative z-10 max-w-6xl mx-auto px-6 py-16">
         {/* Logo Section */}
-        <div className="text-center mb-12">
-          <div className="flex justify-center mb-6">
-            <LogoFull className="drop-shadow-2xl" />
+        <div className="text-center mb-16">
+          <div className="flex justify-center mb-8">
+            <div className="relative">
+              <div className="absolute -inset-1 rounded-3xl bg-gradient-to-br from-indigo-500/50 via-sky-500/40 to-fuchsia-500/20 opacity-70 blur-2xl"></div>
+              <div className="relative bg-slate-950/70 backdrop-blur-xl rounded-3xl p-8 border border-white/15 shadow-[0_20px_60px_-30px_rgba(59,130,246,0.6)]">
+                <LogoFull className="drop-shadow-2xl" />
+              </div>
+            </div>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
+          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
             COEXIST.AI
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
             Assistant IA spécialisé dans la résolution de conflits et la promotion de la coexistence pacifique
           </p>
         </div>
 
         {/* Mission Section */}
-        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-3xl p-8 mb-12 border border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-3 mb-6">
-            <Heart className="text-red-500" size={28} />
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+        <div className="bg-gray-900/80 backdrop-blur-xl rounded-3xl p-8 mb-16 border border-gray-800 shadow-lg">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-800 text-white shadow-lg border border-gray-700">
+              <Heart size={24} />
+            </div>
+            <h2 className="text-3xl font-bold text-white">
               Notre Mission
             </h2>
           </div>
-          <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+          <p className="text-lg text-gray-300 leading-relaxed">
             Dans un monde où les conflits semblent inévitables, COEXIST.AI offre une approche révolutionnaire 
             pour transformer les désaccords en opportunités de compréhension mutuelle. Notre intelligence 
             artificielle combine sagesse ancestrale et psychologie moderne pour guider chacun vers des 
@@ -52,54 +64,62 @@ export default function AboutPage() {
         </div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
-          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-3xl p-6 border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center gap-3 mb-4">
-              <Users className="text-blue-500" size={24} />
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+        <div className="grid md:grid-cols-2 gap-8 mb-16">
+          <div className="bg-gray-900/80 backdrop-blur-xl rounded-3xl p-8 border border-gray-800 shadow-lg transition hover:border-gray-700">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-800 text-white shadow-lg border border-gray-700">
+                <Users size={24} />
+              </div>
+              <h3 className="text-xl font-semibold text-white">
                 Médiation Intelligente
               </h3>
             </div>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-gray-300 leading-relaxed">
               Analyse contextuelle des conflits familiaux, professionnels, amoureux et amicaux 
               pour proposer des stratégies de résolution adaptées.
             </p>
           </div>
 
-          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-3xl p-6 border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center gap-3 mb-4">
-              <MessageCircle className="text-green-500" size={24} />
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+          <div className="bg-gray-900/80 backdrop-blur-xl rounded-3xl p-8 border border-gray-800 shadow-lg transition hover:border-gray-700">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-800 text-white shadow-lg border border-gray-700">
+                <MessageCircle size={24} />
+              </div>
+              <h3 className="text-xl font-semibold text-white">
                 Communication Bienveillante
               </h3>
             </div>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-gray-300 leading-relaxed">
               Techniques de communication non-violente et d&apos;écoute active pour 
               transformer les tensions en dialogues constructifs.
             </p>
           </div>
 
-          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-3xl p-6 border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center gap-3 mb-4">
-              <Shield className="text-purple-500" size={24} />
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+          <div className="bg-gray-900/80 backdrop-blur-xl rounded-3xl p-8 border border-gray-800 shadow-lg transition hover:border-gray-700">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-800 text-white shadow-lg border border-gray-700">
+                <Shield size={24} />
+              </div>
+              <h3 className="text-xl font-semibold text-white">
                 Confidentialité Totale
               </h3>
             </div>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-gray-300 leading-relaxed">
               Vos conversations restent privées. Mode démo disponible sans inscription, 
               avec possibilité d&apos;intégration OpenAI sécurisée.
             </p>
           </div>
 
-          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-3xl p-6 border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center gap-3 mb-4">
-              <Globe className="text-indigo-500" size={24} />
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+          <div className="bg-gray-900/80 backdrop-blur-xl rounded-3xl p-8 border border-gray-800 shadow-lg transition hover:border-gray-700">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-800 text-white shadow-lg border border-gray-700">
+                <Globe size={24} />
+              </div>
+              <h3 className="text-xl font-semibold text-white">
                 Approche Universelle
               </h3>
             </div>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-gray-300 leading-relaxed">
               Respect des différences culturelles, religieuses et idéologiques 
               pour une coexistence authentique et durable.
             </p>
@@ -107,10 +127,12 @@ export default function AboutPage() {
         </div>
 
         {/* Principles Section */}
-        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-3xl p-8 mb-12 border border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-3 mb-6">
-            <Lightbulb className="text-yellow-500" size={28} />
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+        <div className="bg-gray-900/80 backdrop-blur-xl rounded-3xl p-8 mb-16 border border-gray-800 shadow-lg">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-800 text-white shadow-lg border border-gray-700">
+              <Lightbulb size={24} />
+            </div>
+            <h2 className="text-3xl font-bold text-white">
               Les 10 Principes COEXIST
             </h2>
           </div>
@@ -127,8 +149,8 @@ export default function AboutPage() {
               "⚖️ Justice - Équité et fairness",
               "🕊️ Paix - Solutions pacifiques"
             ].map((principle, index) => (
-              <div key={index} className="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+              <div key={index} className="flex items-start gap-3 p-4 rounded-2xl bg-gray-800/50 border border-gray-700 backdrop-blur">
+                <span className="text-sm font-medium text-gray-200">
                   {principle}
                 </span>
               </div>
@@ -138,16 +160,16 @@ export default function AboutPage() {
 
         {/* CTA Section */}
         <div className="text-center">
-          <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl p-8 text-white">
-            <h2 className="text-2xl font-bold mb-4">
+          <div className="bg-gray-900/80 backdrop-blur-xl rounded-3xl p-12 border border-gray-800 shadow-lg">
+            <h2 className="text-3xl font-bold mb-6 text-white">
               Prêt à transformer vos conflits en opportunités ?
             </h2>
-            <p className="text-lg mb-6 opacity-90">
+            <p className="text-xl mb-8 text-gray-300">
               Commencez dès maintenant une conversation avec COEXIST.AI
             </p>
             <Link 
               href="/"
-              className="inline-flex items-center gap-2 bg-white text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+              className="inline-flex items-center gap-3 bg-white text-gray-900 px-8 py-4 rounded-2xl font-semibold hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl"
             >
               <MessageCircle size={20} />
               Démarrer le Chat
@@ -157,8 +179,11 @@ export default function AboutPage() {
       </main>
 
       {/* Footer */}
-      <footer className="text-center py-8 text-gray-500 dark:text-gray-400">
-        <p>Développé avec ❤️ pour un monde plus paisible</p>
+      <footer className="relative z-10 text-center py-12 text-gray-500">
+        <p className="flex items-center justify-center gap-2">
+          <Heart className="text-red-500" size={16} />
+          Développé avec amour pour un monde plus paisible
+        </p>
       </footer>
     </div>
   );

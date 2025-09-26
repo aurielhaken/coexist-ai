@@ -1,0 +1,19 @@
+{
+  "input": "public/coexist-logo-minimal.svg",
+  "output": "public/",
+  "sizes": [
+    192,
+    512,
+    180,
+    144,
+    96,
+    72,
+    48
+  ],
+  "formats": [
+    "png",
+    "ico"
+  ],
+  "background": "#ffffff",
+  "padding": 10
+}

@@ -1,0 +1,307 @@
+/* COEXIST.AI - Styles additionnels pour le patch 2025-09-26 */
+
+/* Variables CSS personnalisées */
+:root {
+  --coexist-primary: #4F46E5;
+  --coexist-secondary: #7C3AED;
+  --coexist-accent: #06B6D4;
+  --coexist-success: #10B981;
+  --coexist-warning: #F59E0B;
+  --coexist-error: #EF4444;
+  --coexist-gray-50: #F9FAFB;
+  --coexist-gray-100: #F3F4F6;
+  --coexist-gray-200: #E5E7EB;
+  --coexist-gray-300: #D1D5DB;
+  --coexist-gray-400: #9CA3AF;
+  --coexist-gray-500: #6B7280;
+  --coexist-gray-600: #4B5563;
+  --coexist-gray-700: #374151;
+  --coexist-gray-800: #1F2937;
+  --coexist-gray-900: #111827;
+}
+
+/* Styles pour les boutons */
+.btn-primary {
+  @apply bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-700 transition-colors duration-200 shadow-sm hover:shadow-md;
+}
+
+.btn-secondary {
+  @apply bg-white text-indigo-600 px-6 py-3 rounded-lg font-medium border border-indigo-600 hover:bg-indigo-50 transition-colors duration-200 shadow-sm hover:shadow-md;
+}
+
+.btn-success {
+  @apply bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors duration-200 shadow-sm hover:shadow-md;
+}
+
+.btn-outline {
+  @apply bg-transparent text-gray-700 px-6 py-3 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors duration-200;
+}
+
+/* Styles pour les cartes */
+.card {
+  @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200;
+}
+
+.card-elevated {
+  @apply bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-200;
+}
+
+/* Styles pour les sections */
+.section-padding {
+  @apply py-16 px-4 sm:px-6 lg:px-8;
+}
+
+.container-max {
+  @apply max-w-7xl mx-auto;
+}
+
+/* Styles pour les gradients */
+.gradient-primary {
+  background: linear-gradient(135deg, var(--coexist-primary) 0%, var(--coexist-secondary) 100%);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--coexist-primary) 0%, var(--coexist-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Styles pour les animations */
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out;
+}
+
+.animate-bounce-gentle {
+  animation: bounceGentle 2s infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounceGentle {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Styles pour les messages de chat */
+.message-user {
+  @apply bg-indigo-600 text-white rounded-2xl rounded-br-md px-4 py-3 max-w-xs ml-auto;
+}
+
+.message-ai {
+  @apply bg-gray-100 text-gray-900 rounded-2xl rounded-bl-md px-4 py-3 max-w-xs;
+}
+
+/* Styles pour les icônes */
+.icon-sm {
+  @apply w-5 h-5;
+}
+
+.icon-md {
+  @apply w-6 h-6;
+}
+
+.icon-lg {
+  @apply w-8 h-8;
+}
+
+.icon-xl {
+  @apply w-12 h-12;
+}
+
+/* Styles pour les formulaires */
+.form-input {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors duration-200;
+}
+
+.form-textarea {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors duration-200 resize-none;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-gray-700 mb-2;
+}
+
+/* Styles pour les badges */
+.badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+}
+
+.badge-primary {
+  @apply bg-indigo-100 text-indigo-800;
+}
+
+.badge-success {
+  @apply bg-green-100 text-green-800;
+}
+
+.badge-warning {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.badge-error {
+  @apply bg-red-100 text-red-800;
+}
+
+/* Styles pour les alertes */
+.alert {
+  @apply p-4 rounded-lg border;
+}
+
+.alert-info {
+  @apply bg-blue-50 border-blue-200 text-blue-800;
+}
+
+.alert-success {
+  @apply bg-green-50 border-green-200 text-green-800;
+}
+
+.alert-warning {
+  @apply bg-yellow-50 border-yellow-200 text-yellow-800;
+}
+
+.alert-error {
+  @apply bg-red-50 border-red-200 text-red-800;
+}
+
+/* Styles pour les modales */
+.modal-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50;
+}
+
+.modal-content {
+  @apply bg-white rounded-xl shadow-xl max-w-md w-full p-6;
+}
+
+/* Styles pour les tooltips */
+.tooltip {
+  @apply absolute z-10 px-3 py-2 text-sm text-white bg-gray-900 rounded-lg shadow-lg opacity-0 invisible transition-opacity duration-200;
+}
+
+.tooltip:hover {
+  @apply opacity-100 visible;
+}
+
+/* Styles pour les spinners */
+.spinner {
+  @apply animate-spin rounded-full border-2 border-gray-300 border-t-indigo-600;
+}
+
+.spinner-sm {
+  @apply w-4 h-4;
+}
+
+.spinner-md {
+  @apply w-6 h-6;
+}
+
+.spinner-lg {
+  @apply w-8 h-8;
+}
+
+/* Styles pour les séparateurs */
+.divider {
+  @apply border-t border-gray-200 my-6;
+}
+
+.divider-dashed {
+  @apply border-t border-dashed border-gray-300 my-6;
+}
+
+/* Styles pour les grilles */
+.grid-auto-fit {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.grid-auto-fill {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+/* Styles pour les responsive */
+@media (max-width: 640px) {
+  .btn-primary,
+  .btn-secondary {
+    @apply px-4 py-2 text-sm;
+  }
+  
+  .card {
+    @apply p-4;
+  }
+  
+  .section-padding {
+    @apply py-12;
+  }
+}
+
+/* Styles pour l'accessibilité */
+.sr-only {
+  @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
+}
+
+.focus-visible {
+  @apply focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2;
+}
+
+/* Styles pour les états de chargement */
+.loading-skeleton {
+  @apply animate-pulse bg-gray-200 rounded;
+}
+
+/* Styles pour les transitions */
+.transition-all {
+  @apply transition-all duration-200 ease-in-out;
+}
+
+.transition-colors {
+  @apply transition-colors duration-200 ease-in-out;
+}
+
+.transition-transform {
+  @apply transition-transform duration-200 ease-in-out;
+}
+
+/* Styles pour les ombres */
+.shadow-soft {
+  box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
+}
+
+.shadow-medium {
+  box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.shadow-strong {
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.15), 0 2px 10px -2px rgba(0, 0, 0, 0.05);
+}

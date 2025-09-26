@@ -1,203 +1,154 @@
-'use client';
+import Link from "next/link";
+import { ArrowRight, Heart, Users, MessageCircle, Shield, Globe, Lightbulb } from "lucide-react";
+import Chat from "@/components/Chat";
 
-import { useState } from 'react';
-import { MessageSquare, Send, Sparkles, Heart, Info } from 'lucide-react';
-import { Logo } from '../components/Logo';
-import Link from 'next/link';
-
-interface Message {
-  id: string;
-  content: string;
-  isUser: boolean;
-  timestamp: Date;
-}
-
-export default function Home() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      content: "Bonjour ! Je suis COEXIST.AI, votre assistant spécialisé dans la résolution de conflits et la promotion de la coexistence pacifique. Comment puis-je vous aider aujourd'hui ?",
-      isUser: false,
-      timestamp: new Date()
-    }
-  ]);
-  const [inputMessage, setInputMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-
-  const sendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputMessage.trim() || isLoading) return;
-
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      content: inputMessage,
-      isUser: true,
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-    setInputMessage('');
-    setIsLoading(true);
-
-    try {
-      const response = await fetch('/api/advice', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: inputMessage,
-          useDemo: true
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        const aiMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          content: data.response,
-          isUser: false,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, aiMessage]);
-      } else {
-        throw new Error(data.error || 'Erreur lors de la communication avec l&apos;API');
-      }
-    } catch (error) {
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: `Désolé, une erreur s'est produite : ${error instanceof Error ? error.message : 'Erreur inconnue'}`,
-        isUser: false,
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      {/* Header */}
-      <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-3">
-          <div className="flex items-center gap-3">
-            <Logo size="lg" className="drop-shadow-lg" />
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                COEXIST.AI
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+      <main className="container mx-auto px-4 py-8">
+        <div className="grid lg:grid-cols-2 gap-8 items-start">
+          {/* Hero Section */}
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <h1 className="text-4xl font-bold text-foreground">
+                Transformez vos conflits en opportunités de dialogue
               </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Assistant de coexistence pacifique
+              <p className="text-lg text-muted-foreground">
+                COEXIST.AI vous accompagne dans la résolution pacifique de vos conflits 
+                grâce à l'intelligence artificielle et la sagesse universelle.
               </p>
             </div>
-          </div>
-          <div className="ml-auto flex items-center gap-3">
-            <Link 
-              href="/about"
-              className="flex items-center gap-1 text-gray-600 hover:text-blue-600 transition-colors"
-            >
-              <Info size={16} />
-              <span className="hidden sm:inline text-sm">À propos</span>
-            </Link>
-            <span className="px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
-              Mode Démo
-            </span>
-          </div>
-        </div>
-      </header>
 
-      {/* Main Chat Area */}
-      <main className="max-w-4xl mx-auto px-4 py-6 flex flex-col h-[calc(100vh-100px)]">
-        {/* Messages Container */}
-        <div className="flex-1 overflow-y-auto mb-6 space-y-4">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
-            >
-              <div
-                className={`max-w-3xl px-6 py-4 rounded-2xl shadow-sm ${
-                  message.isUser
-                    ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white ml-12'
-                    : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 mr-12 border border-gray-200 dark:border-gray-700'
-                }`}
-              >
-                {!message.isUser && (
-                  <div className="flex items-center gap-2 mb-2">
-                    <Heart size={16} className="text-red-500" />
-                    <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
-                      COEXIST.AI
-                    </span>
+            <div className="mt-6 flex gap-3">
+              <a href="/chat" className="btn-primary">Commencer le dialogue</a>
+              <a href="/test" className="btn-secondary">Voir un exemple</a>
+            </div>
+
+            {/* Features Grid */}
+            <div className="grid sm:grid-cols-2 gap-4 pt-8">
+              <div className="flex items-start space-x-3 p-4 rounded-lg bg-card border">
+                <div className="w-8 h-8 bg-brand-100 dark:bg-brand-900 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Heart className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Médiation Intelligente</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Analyse contextuelle pour des solutions adaptées
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-3 p-4 rounded-lg bg-card border">
+                <div className="w-8 h-8 bg-brand-100 dark:bg-brand-900 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <MessageCircle className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Communication Bienveillante</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Techniques de dialogue constructif
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-3 p-4 rounded-lg bg-card border">
+                <div className="w-8 h-8 bg-brand-100 dark:bg-brand-900 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Shield className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Confidentialité Totale</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Vos conversations restent privées
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-3 p-4 rounded-lg bg-card border">
+                <div className="w-8 h-8 bg-brand-100 dark:bg-brand-900 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Globe className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Approche Universelle</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Respect des différences culturelles
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Chat Section */}
+          <div className="lg:sticky lg:top-8">
+            <div className="bg-card border rounded-lg shadow-lg h-[600px]">
+              <div className="p-4 border-b">
+                <div className="flex items-center space-x-2">
+                  <div className="w-6 h-6 bg-brand-500 rounded-full flex items-center justify-center">
+                    <span className="text-white font-bold text-xs">C</span>
                   </div>
-                )}
-                <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">
-                  {message.content}
-                </p>
-                <div className="mt-2 text-xs opacity-70">
-                  {message.timestamp.toLocaleTimeString('fr-FR', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
+                  <div>
+                    <h3 className="font-semibold text-foreground">COEXIST.AI</h3>
+                    <p className="text-xs text-muted-foreground">Assistant de paix</p>
+                  </div>
                 </div>
               </div>
+              <Chat />
             </div>
-          ))}
-          
-          {isLoading && (
-            <div className="flex justify-start">
-              <div className="max-w-3xl px-6 py-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 mr-12">
-                <div className="flex items-center gap-2 mb-2">
-                  <Heart size={16} className="text-red-500" />
-                  <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
-                    COEXIST.AI
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Sparkles size={16} className="animate-spin text-blue-500" />
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
-                    Je réfléchis à votre situation...
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Input Form */}
-        <form onSubmit={sendMessage} className="flex gap-3">
-          <div className="flex-1 relative">
-            <input
-              type="text"
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              placeholder="Décrivez votre situation ou posez votre question..."
-              className="w-full px-6 py-4 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
-              disabled={isLoading}
-            />
-            <MessageSquare 
-              size={20} 
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" 
-            />
           </div>
-          <button
-            type="submit"
-            disabled={!inputMessage.trim() || isLoading}
-            className="px-6 py-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm flex items-center gap-2"
-          >
-            <Send size={20} />
-            <span className="hidden sm:inline">Envoyer</span>
-          </button>
-        </form>
-
-        {/* Footer Info */}
-        <div className="mt-4 text-center">
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            COEXIST.AI utilise l&apos;intelligence artificielle pour promouvoir la paix et la compréhension mutuelle.
-          </p>
         </div>
+
+        {/* Principles Section */}
+        <section className="mt-16 py-12">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
+              Les 10 Principes COEXIST
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Fondés sur la sagesse universelle et la psychologie moderne, 
+              ces principes guident chaque interaction pour une coexistence harmonieuse.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
+            {[
+              { icon: "🎧", text: "Écoute Active" },
+              { icon: "💝", text: "Empathie" },
+              { icon: "🤝", text: "Respect Mutuel" },
+              { icon: "💬", text: "Communication Non-Violente" },
+              { icon: "🏆", text: "Solutions Gagnant-Gagnant" },
+              { icon: "⏳", text: "Patience" },
+              { icon: "🌉", text: "Médiation" },
+              { icon: "🌍", text: "Tolérance" },
+              { icon: "⚖️", text: "Justice" },
+              { icon: "🕊️", text: "Paix" },
+            ].map((principle, index) => (
+              <div
+                key={index}
+                className="p-4 rounded-lg bg-card border text-center hover:shadow-md transition-shadow"
+              >
+                <div className="text-2xl mb-2">{principle.icon}</div>
+                <p className="text-sm font-medium text-foreground">{principle.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
       </main>
+
+      {/* Footer */}
+      <footer className="border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 mt-16">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex flex-col md:flex-row items-center justify-between">
+            <div className="flex items-center space-x-2 mb-4 md:mb-0">
+              <div className="w-6 h-6 bg-brand-500 rounded flex items-center justify-center">
+                <span className="text-white font-bold text-xs">C</span>
+              </div>
+              <span className="font-semibold text-foreground">COEXIST.AI</span>
+            </div>
+            <p className="text-sm text-muted-foreground flex items-center">
+              <Heart className="w-4 h-4 text-red-500 mr-1" />
+              Développé avec amour pour un monde plus paisible
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

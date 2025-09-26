@@ -1,0 +1,17 @@
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Cercle de fond -->
+  <circle cx="96" cy="96" r="76" fill="url(#iconGradient)"/>
+  
+  <!-- Cercle intérieur blanc -->
+  <circle cx="96" cy="96" r="61" fill="white"/>
+  
+  <!-- Symbole de paix - lignes croisées -->
+  <path d="M76 76 L116 116 M116 76 L76 116 M96 66 L96 126 M66 96 L126 96" stroke="#4F46E5" stroke-width="6" stroke-linecap="round"/>
+</svg>
