@@ -11,7 +11,14 @@ interface Message {
 }
 
 export default function Chat() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: "welcome",
+      content: "Bonjour ! Je suis COEXIST.AI, votre assistant spécialisé dans la résolution de conflits et la promotion de la coexistence pacifique. Comment puis-je vous aider aujourd'hui ?",
+      isUser: false,
+      timestamp: new Date(),
+    }
+  ]);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -27,6 +34,7 @@ export default function Chat() {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const messageToSend = inputMessage;
     setInputMessage("");
     setIsLoading(true);
 
@@ -36,7 +44,7 @@ export default function Chat() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: inputMessage }),
+        body: JSON.stringify({ message: messageToSend }),
       });
 
       if (!response.ok) {
