@@ -66,6 +66,26 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Resets et styles de base */
+  a { 
+    text-decoration: none; 
+    color: inherit; 
+  }
+  
+  button { 
+    cursor: pointer; 
+  }
+  
+  body { 
+    font-size: 15px; 
+    line-height: 1.6; 
+  }
+  
+  *:focus-visible { 
+    outline: 2px solid rgba(120,120,120,.35); 
+    outline-offset: 2px; 
+  }
 }
 
 /* Styles pour le thème sombre moderne COEXIST.AI */
@@ -117,4 +137,58 @@
   font-size: 11px;
   color: #94a3b8;
   margin-top: 4px;
+}
+
+/* Styles globaux pour la typographie et les éléments de base */
+@layer base {
+  /* Neutralisation des styles par défaut */
+  a {
+    @apply text-blue-600 hover:text-blue-800 transition-colors;
+  }
+  
+  button {
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  }
+  
+  input, textarea {
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+  }
+  
+  /* Typographie améliorée */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold text-gray-900 leading-tight;
+  }
+  
+  h1 {
+    @apply text-4xl lg:text-5xl;
+  }
+  
+  h2 {
+    @apply text-3xl lg:text-4xl;
+  }
+  
+  h3 {
+    @apply text-2xl lg:text-3xl;
+  }
+  
+  h4 {
+    @apply text-xl lg:text-2xl;
+  }
+  
+  p {
+    @apply text-gray-700 leading-relaxed;
+  }
+  
+  /* Styles pour les formulaires */
+  .form-input {
+    @apply w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors;
+  }
+  
+  .form-button {
+    @apply px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium;
+  }
+  
+  .form-button:disabled {
+    @apply bg-gray-300 text-gray-500 cursor-not-allowed hover:bg-gray-300;
+  }
 }

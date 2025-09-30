@@ -91,11 +91,22 @@ export async function POST(request: NextRequest) {
     // Vérifier les clés API disponibles
     const openRouterKey = process.env.OPENROUTER_API_KEY;
     const openAIKey = process.env.OPENAI_API_KEY;
+    const claudeKey = process.env.ANTHROPIC_API_KEY;
     
-    if (!openRouterKey && !openAIKey) {
-      // Mode fallback avec l'IA enrichie intégrée
-      const fallbackResponse = generateEnrichedResponse(message, language, userId);
-      return NextResponse.json(fallbackResponse);
+    // Vérifier si nous avons au moins une clé API
+    if (!openRouterKey && !openAIKey && !claudeKey) {
+      return NextResponse.json({
+        response: `Je suis désolé, mais les services d'intelligence artificielle ne sont pas configurés actuellement. 
+
+Pour activer les réponses intelligentes, veuillez configurer une clé API OpenAI, OpenRouter ou Anthropic dans les variables d'environnement.
+
+En attendant, je peux vous aider avec mes connaissances intégrées sur la paix, la coexistence et la sagesse universelle. Comment puis-je vous accompagner aujourd'hui ?`,
+        mode: 'fallback',
+        timestamp: new Date().toISOString(),
+        personalized: false,
+        language: 'fr',
+        error: 'No API keys configured'
+      }, { status: 503 });
     }
 
     // Vérifier si une recherche web est nécessaire
@@ -127,41 +138,67 @@ export async function POST(request: NextRequest) {
       }
     ];
 
-    // Essayer OpenRouter en premier (modèles open-source plus puissants)
+    // Stratégie de fallback améliorée avec les meilleurs modèles
     let response = '';
-    if (openRouterKey) {
+    let mode = 'fallback';
+    
+    // 1. Essayer Claude 3.5 Sonnet directement (le plus performant)
+    if (!response && claudeKey) {
       try {
+        console.log('Tentative avec Claude 3.5 Sonnet...');
+        response = await callClaude(messages, claudeKey);
+        mode = 'claude-3.5-sonnet';
+      } catch (e) {
+        console.error('Claude failed:', e);
+      }
+    }
+
+    // 2. Essayer OpenRouter avec les meilleurs modèles
+    if (!response && openRouterKey) {
+      try {
+        console.log('Tentative avec OpenRouter...');
         response = await callOpenRouter(messages, openRouterKey);
+        mode = 'openrouter-premium';
       } catch (e) {
         console.error('OpenRouter failed:', e);
       }
     }
 
-    // Fallback OpenAI si OpenRouter a échoué ou n'est pas disponible
+    // 3. Fallback OpenAI GPT-4o
     if (!response && openAIKey) {
       try {
+        console.log('Tentative avec OpenAI GPT-4o...');
         const openai = new OpenAI({ apiKey: openAIKey });
         const completion = await openai.chat.completions.create({
-          model: "gpt-4o-mini",
+          model: "gpt-4o", // Utiliser GPT-4o au lieu de gpt-4o-mini
           messages,
-          max_tokens: 1000,
-          temperature: 0.4,
-          top_p: 0.9
+          max_tokens: 1500, // Plus de tokens pour des réponses complètes
+          temperature: 0.3, // Plus déterministe
+          top_p: 0.95
         });
         response = completion.choices[0]?.message?.content || '';
+        mode = 'openai-gpt-4o';
       } catch (e) {
         console.error('OpenAI failed:', e);
       }
     }
 
-    // Si tout a échoué, utiliser le fallback enrichi
+    // 4. Si tout a échoué, retourner une erreur
     if (!response) {
-      const fallbackResponse = generateEnrichedResponse(message, language, userId);
-      return NextResponse.json(fallbackResponse);
-    }
+      console.log('Toutes les APIs ont échoué...');
+      return NextResponse.json({
+        response: `Je rencontre actuellement des difficultés techniques avec les services d'intelligence artificielle. 
 
-    // Déterminer le mode utilisé
-    const mode = openRouterKey ? 'openrouter-llama' : 'openai';
+Veuillez réessayer dans quelques instants. Si le problème persiste, vérifiez que les clés API sont correctement configurées.
+
+Je reste à votre disposition pour vous aider dès que les services seront rétablis.`,
+        mode: 'error',
+        timestamp: new Date().toISOString(),
+        personalized: false,
+        language: 'fr',
+        error: 'All API services failed'
+      }, { status: 503 });
+    }
     
     // Ajouter des métadonnées enrichies
     const enhancedResponse = {
@@ -288,308 +325,88 @@ function generateFollowUpSuggestions(message: string, language: string): string[
   ];
 }
 
-function generateEnrichedResponse(message: string, language: string, userId?: string) {
-  const lowerMessage = message.toLowerCase();
-  
-  // Détection du type de conversation
-  let response = '';
-  let knowledgeSources: string[] = [];
-  let followUpSuggestions: string[] = [];
-  
-  // Détection des réponses courtes et confirmations
-  if (lowerMessage === 'oui' || lowerMessage === 'oui je suis juif' || lowerMessage === 'oui je suis juive' ||
-      lowerMessage.includes('oui je suis') || lowerMessage.includes('je suis juif') || lowerMessage.includes('je suis juive')) {
-    
-    response = `Mazal tov ! C'est merveilleux de rencontrer un frère ou une sœur juif(ve) ! 🙏
+// Fonction supprimée - plus de mode démo
 
-En tant que personne de la communauté, vous savez déjà que l'étude de la Torah est une mitzvah précieuse. Voici quelques suggestions adaptées à votre situation :
+// Fonction pour appeler OpenRouter avec les meilleurs modèles
+async function callOpenRouter(messages: any[], apiKey: string): Promise<string> {
+  // Modèles par ordre de préférence (du plus performant au moins performant)
+  const MODELS = [
+    'anthropic/claude-3.5-sonnet', // Le plus performant pour la compréhension
+    'openai/gpt-4o', // Excellent pour le raisonnement
+    'meta-llama/llama-3.1-70b-instruct', // Bon modèle open-source
+    'google/gemini-pro-1.5', // Alternative Google
+    'meta-llama/llama-3.1-8b-instruct' // Fallback plus léger
+  ];
 
-**Pour approfondir votre pratique :**
-- Étudier la Paracha de la semaine avec les commentaires classiques
-- Explorer le Talmud pour comprendre les discussions des sages
-- Rejoindre un Chavruta pour l'étude en binôme
-
-**Ressources recommandées :**
-- Sefaria.org pour accéder aux textes et commentaires
-- Chabad.org pour des explications accessibles
-- Votre synagogue locale pour des cours et événements
-
-**Concepts à explorer :**
-- Tikkun Olam (réparer le monde) dans votre vie quotidienne
-- L'importance du Shabbat et des fêtes
-- Les bénédictions et leur signification profonde
-
-Quelle aspect de la Torah vous intéresse le plus en ce moment ?`;
-
-    knowledgeSources = ['Torah', 'Traditions juives', 'Communauté juive'];
-    followUpSuggestions = [
-      'Comment organiser mon étude de Torah ?',
-      'Ressources pour étudier le Talmud',
-      'Intégrer la Torah dans ma vie quotidienne'
-    ];
-  }
-  
-  // Salutations et conversations générales
-  else if (lowerMessage.includes('salut') || lowerMessage.includes('bonjour') || lowerMessage.includes('bonsoir') || 
-      lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('ca va') || 
-      lowerMessage.includes('comment allez') || lowerMessage.includes('how are you')) {
-    
-    response = "Salut ! Ça va très bien, merci ! Je suis là pour vous aider avec vos questions et défis. Que puis-je faire pour vous aujourd'hui ?";
-    knowledgeSources = ['Communication bienveillante'];
-    followUpSuggestions = [
-      'Comment améliorer ma communication ?',
-      'Résoudre un conflit',
-      'Développer mes relations'
-    ];
-  }
-  
-  // Questions sur la vie, l'existence, Dieu
-  else if (lowerMessage.includes('dieu') || lowerMessage.includes('god') || lowerMessage.includes('création') || 
-           lowerMessage.includes('vie') || lowerMessage.includes('existence') || lowerMessage.includes('terre') ||
-           lowerMessage.includes('plus belle chose')) {
-    
-    response = `La plus belle chose sur terre, c'est la capacité humaine à aimer, à créer des liens, et à transformer les conflits en compréhension mutuelle.
-
-Chaque personne porte en elle une valeur unique. La Torah enseigne que nous sommes créés à l'image de Dieu - cela signifie que chaque être humain reflète quelque chose de sacré.
-
-La beauté réside dans nos différences qui, quand elles sont respectées, créent une richesse incroyable. C'est cette diversité qui fait la force de l'humanité.
-
-Qu'est-ce qui vous inspire le plus dans la vie ?`;
-
-    knowledgeSources = ['Torah', 'Sagesse universelle'];
-    followUpSuggestions = [
-      'Comment cultiver ma spiritualité ?',
-      'Comprendre ma place dans l\'univers',
-      'Développer la gratitude'
-    ];
-  }
-  
-  // Questions sur la Kabbale et le Zohar
-  else if (lowerMessage.includes('zohar') || lowerMessage.includes('kabbale') || lowerMessage.includes('kabbalah') ||
-           lowerMessage.includes('sephirot') || lowerMessage.includes('sefirot') || lowerMessage.includes('tzimtzum') ||
-           lowerMessage.includes('merkava') || lowerMessage.includes('merkabah') || lowerMessage.includes('tikkun olam') ||
-           lowerMessage.includes('connais tu le zohar') || lowerMessage.includes('connaissez vous le zohar') ||
-           lowerMessage.includes('qu\'est ce que le zohar') || lowerMessage.includes('c\'est quoi le zohar')) {
-    
-    response = `Ah, le Zohar ! Le Livre de la Splendeur est effectivement un texte profond et mystique de la tradition kabbalistique. 🌟
-
-**Le Zohar - Livre de la Splendeur :**
-- Écrit par Rabbi Shimon bar Yochaï au 2ème siècle
-- Texte central de la Kabbale pratique et théorique
-- Explore les mystères de la création et de la relation divine
-- Commentaire mystique sur la Torah
-
-**Concepts clés du Zohar :**
-- Les Sefirot : les dix émanations divines
-- Tzimtzum : la contraction divine pour créer l'espace
-- La réparation du monde (Tikkun Olam)
-- Les âmes et leur parcours spirituel
-
-**Pour étudier le Zohar :**
-- Commencer par des commentaires accessibles (Daniel Matt, Gershom Scholem)
-- Étudier avec un guide expérimenté en Kabbale
-- Approche progressive : concepts de base d'abord
-- Intégrer l'étude avec la pratique spirituelle
-
-**Avertissement important :**
-La Kabbale est une tradition profonde qui nécessite une préparation solide en Torah et Talmud. Il est recommandé d'avoir une base solide avant de s'engager dans ces enseignements mystiques.
-
-Qu'est-ce qui vous attire spécifiquement dans le Zohar ?`;
-
-    knowledgeSources = ['Zohar', 'Kabbale', 'Mystique juive', 'Traditions spirituelles'];
-    followUpSuggestions = [
-      'Comment commencer l\'étude de la Kabbale ?',
-      'Quels sont les textes de base à connaître ?',
-      'Différence entre Kabbale théorique et pratique'
-    ];
-  }
-  
-  // Questions sur les religions
-  else if (lowerMessage.includes('juif') || lowerMessage.includes('judaïsme') || lowerMessage.includes('jewish') ||
-           lowerMessage.includes('rosh') || lowerMessage.includes('hachana') || lowerMessage.includes('shabbat') ||
-           lowerMessage.includes('torah') || lowerMessage.includes('apprendre la torah')) {
-    
-    // Détecter si la personne est juive
-    if (lowerMessage.includes('je suis juif') || lowerMessage.includes('je suis juive') || 
-        lowerMessage.includes('oui je suis') || lowerMessage.includes('je pratique le judaïsme')) {
+  for (const model of MODELS) {
+    try {
+      console.log(`Tentative avec le modèle: ${model}`);
       
-      response = `Mazal tov ! C'est merveilleux de rencontrer un frère ou une sœur juif(ve) ! 🙏
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': 'https://coexist-ai.com',
+          'X-Title': 'COEXIST.AI',
+        },
+        body: JSON.stringify({
+          model,
+          messages,
+          temperature: 0.3, // Plus déterministe pour de meilleures réponses
+          top_p: 0.95,
+          max_tokens: 1500, // Plus de tokens pour des réponses complètes
+          stream: false
+        })
+      });
 
-En tant que personne de la communauté, vous savez déjà que l'étude de la Torah est une mitzvah précieuse. Voici quelques suggestions adaptées à votre situation :
-
-**Pour approfondir votre pratique :**
-- Étudier la Paracha de la semaine avec les commentaires classiques
-- Explorer le Talmud pour comprendre les discussions des sages
-- Rejoindre un Chavruta pour l'étude en binôme
-
-**Ressources recommandées :**
-- Sefaria.org pour accéder aux textes et commentaires
-- Chabad.org pour des explications accessibles
-- Votre synagogue locale pour des cours et événements
-
-**Concepts à explorer :**
-- Tikkun Olam (réparer le monde) dans votre vie quotidienne
-- L'importance du Shabbat et des fêtes
-- Les bénédictions et leur signification profonde
-
-Quelle aspect de la Torah vous intéresse le plus en ce moment ?`;
-
-      knowledgeSources = ['Torah', 'Traditions juives', 'Communauté juive'];
-      followUpSuggestions = [
-        'Comment organiser mon étude de Torah ?',
-        'Ressources pour étudier le Talmud',
-        'Intégrer la Torah dans ma vie quotidienne'
-      ];
-    } else {
-      // Personne non-juive intéressée par la Torah
-      response = `Excellente décision ! La Torah est un trésor de sagesse qui peut enrichir votre vie.
-
-Pour commencer l'apprentissage de la Torah, je vous recommande :
-
-**1. Les bases :**
-- Commencer par la Genèse (Bereshit) qui raconte la création du monde
-- Lire les commentaires de Rachi, un sage du 11ème siècle
-- Étudier avec un rabbin ou dans un centre communautaire
-
-**2. Approches pratiques :**
-- Rejoindre un groupe d'étude (Chavruta)
-- Utiliser des ressources en ligne comme Sefaria
-- Commencer par 15-30 minutes par jour
-
-**3. Concepts clés à comprendre :**
-- L'amour du prochain ("Tu aimeras ton prochain comme toi-même")
-- La réparation du monde (Tikkun Olam)
-- L'importance de la justice et de la compassion
-
-Avez-vous déjà une expérience avec l'étude religieuse ?`;
-
-      knowledgeSources = ['Torah', 'Traditions juives', 'Méthodes d\'apprentissage'];
-      followUpSuggestions = [
-        'Où trouver des ressources pour étudier la Torah ?',
-        'Comment intégrer l\'étude dans ma routine ?',
-        'Quels sont les textes fondamentaux à connaître ?'
-      ];
+      if (response.ok) {
+        const data = await response.json();
+        const content = data.choices?.[0]?.message?.content;
+        if (content && content.trim()) {
+          console.log(`Succès avec le modèle: ${model}`);
+          return content;
+        }
+      } else {
+        console.log(`Modèle ${model} indisponible: ${response.status}`);
+      }
+    } catch (error) {
+      console.log(`Erreur avec le modèle ${model}:`, error);
+      continue; // Essayer le modèle suivant
     }
   }
   
-  // Questions sur les conflits
-  else if (lowerMessage.includes('conflit') || lowerMessage.includes('dispute') || lowerMessage.includes('problème') ||
-           lowerMessage.includes('colère') || lowerMessage.includes('énervé')) {
-    
-    response = `Je comprends que vous traversez une période difficile. 💙
-
-La première étape vers la paix est de reconnaître vos émotions avec bienveillance. La colère, comme toutes les émotions, est un signal important de notre âme.
-
-Voici quelques approches pour transformer cette énergie :
-• **Respiration consciente** : 3 respirations profondes avant de réagir
-• **Écoute active** : Essayer de comprendre la perspective de l'autre
-• **Recherche de terrain commun** : Identifier ce qui vous unit plutôt que ce qui vous divise
-
-Le Talmud enseigne que "celui qui est patient dans les moments difficiles mérite d'être réconforté". Votre patience et votre courage sont des forces précieuses.
-
-Comment puis-je vous aider à explorer cette situation plus en détail ?`;
-
-    knowledgeSources = ['Talmud', 'Techniques de médiation', 'Gestion émotionnelle'];
-    followUpSuggestions = [
-      'Techniques de communication non-violente',
-      'Comment organiser une médiation',
-      'Gérer mes émotions'
-    ];
-  }
-  
-  // Questions sur les résolutions
-  else if (lowerMessage.includes('résolution') || lowerMessage.includes('resolution') || lowerMessage.includes('bonnes résolution')) {
-    
-    response = `Excellente initiative ! Les bonnes résolutions sont un moyen puissant de transformer votre vie.
-
-Voici comment bien les formuler :
-
-**1. Soyez spécifique :**
-- Au lieu de "être plus en forme" → "marcher 30 minutes 3 fois par semaine"
-- Au lieu de "lire plus" → "lire 1 livre par mois"
-
-**2. Commencez petit :**
-- Choisissez 1-2 résolutions maximum
-- Divisez en étapes réalisables
-- Célébrez chaque petit progrès
-
-**3. Fixez-vous des rappels :**
-- Notes sur votre téléphone
-- Partenaires de responsabilité
-- Révisions hebdomadaires
-
-**4. Résolutions qui favorisent la paix :**
-- Pratiquer la gratitude quotidienne
-- Améliorer la communication avec vos proches
-- Développer l'empathie
-
-Quelle résolution vous tient le plus à cœur ?`;
-
-    knowledgeSources = ['Développement personnel', 'Objectifs SMART'];
-    followUpSuggestions = [
-      'Comment rester motivé dans mes résolutions ?',
-      'Quelles résolutions favorisent la paix ?',
-      'Comment créer de bonnes habitudes ?'
-    ];
-  }
-  
-  // Réponse par défaut
-  else {
-    response = `C'est une question intéressante ! Je suis là pour vous aider à trouver des solutions pratiques et utiles.
-
-Pouvez-vous me donner plus de détails sur ce qui vous préoccupe ? Plus vous êtes précis, mieux je peux vous conseiller.`;
-    
-    knowledgeSources = ['Dialogue constructif'];
-    followUpSuggestions = [
-      'Comment mieux communiquer ?',
-      'Résoudre un conflit',
-      'Développer mes relations'
-    ];
-  }
-  
-  // Citations supprimées - réponses plus directes et utiles
-  
-  return {
-    response,
-    mode: 'enriched-fallback',
-    timestamp: new Date().toISOString(),
-    personalized: true,
-    language,
-    userId,
-    knowledgeSources,
-    followUpSuggestions,
-    memoryUpdated: true
-  };
+  throw new Error('Tous les modèles OpenRouter ont échoué');
 }
 
-// Fonction pour appeler OpenRouter (modèles open-source)
-async function callOpenRouter(messages: any[], apiKey: string): Promise<string> {
-  const OSS_MODEL = 'meta-llama/llama-3.1-70b-instruct'; // Modèle open-source puissant
-  
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://coexist-ai.com',
-      'X-Title': 'COEXIST.AI',
-    },
-    body: JSON.stringify({
-      model: OSS_MODEL,
-      messages,
-      temperature: 0.4,
-      top_p: 0.9,
-      max_tokens: 1000,
-      stream: false
-    })
-  });
+// Fonction pour appeler Claude directement (si clé API Anthropic disponible)
+async function callClaude(messages: any[], apiKey: string): Promise<string> {
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-3-5-sonnet-20241022',
+        max_tokens: 1500,
+        temperature: 0.3,
+        messages: messages.filter(msg => msg.role !== 'system'),
+        system: messages.find(msg => msg.role === 'system')?.content || ''
+      })
+    });
 
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`OpenRouter error ${response.status}: ${text}`);
+    if (!response.ok) {
+      throw new Error(`Claude API error ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.content?.[0]?.text || '';
+  } catch (error) {
+    console.error('Erreur Claude API:', error);
+    throw error;
   }
-
-  const data = await response.json();
-  return data.choices?.[0]?.message?.content ?? '';
 }
 

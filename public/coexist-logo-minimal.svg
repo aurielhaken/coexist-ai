@@ -1,78 +1,63 @@
-<svg width="280" height="100" viewBox="0 0 280 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <!-- Gradient harmonieux pour la coexistence -->
-    <linearGradient id="coexistGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
-      <stop offset="33%" style="stop-color:#8b5cf6;stop-opacity:1" />
-      <stop offset="66%" style="stop-color:#ec4899;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    <!-- Gradient minimaliste -->
+    <linearGradient id="minimalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
     </linearGradient>
     
-    <!-- Gradient pour le texte -->
-    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#1e293b;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#475569;stop-opacity:1" />
-    </linearGradient>
-    
-    <!-- Effet de lueur subtile -->
-    <filter id="subtleGlow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
-      <feMerge> 
-        <feMergeNode in="coloredBlur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
+    <!-- Ombre subtile -->
+    <filter id="subtleShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="rgba(0,0,0,0.1)"/>
     </filter>
   </defs>
   
-  <!-- Symbole principal - Cercle divisé en sections harmonieuses -->
-  <g transform="translate(50, 50)">
-    <!-- Cercle de base -->
-    <circle cx="0" cy="0" r="25" fill="none" stroke="url(#coexistGradient)" stroke-width="2" opacity="0.3"/>
-    
-    <!-- Sections colorées représentant la diversité -->
-    <path d="M 0 -25 A 25 25 0 0 1 25 0 L 0 0 Z" fill="#3b82f6" opacity="0.8" filter="url(#subtleGlow)"/>
-    <path d="M 25 0 A 25 25 0 0 1 0 25 L 0 0 Z" fill="#8b5cf6" opacity="0.8" filter="url(#subtleGlow)"/>
-    <path d="M 0 25 A 25 25 0 0 1 -25 0 L 0 0 Z" fill="#ec4899" opacity="0.8" filter="url(#subtleGlow)"/>
-    <path d="M -25 0 A 25 25 0 0 1 0 -25 L 0 0 Z" fill="#f59e0b" opacity="0.8" filter="url(#subtleGlow)"/>
-    
-    <!-- Centre unificateur -->
-    <circle cx="0" cy="0" r="8" fill="white" opacity="0.95"/>
-    <circle cx="0" cy="0" r="5" fill="url(#coexistGradient)" opacity="0.9"/>
-    
-    <!-- Symbole de paix au centre -->
-    <g transform="translate(0, 0)">
-      <circle cx="0" cy="0" r="2.5" fill="white" opacity="0.9"/>
-      <path d="M -1.5 -0.5 L 1.5 -0.5 L 1.5 0.5 L -1.5 0.5 Z" fill="url(#coexistGradient)" opacity="0.8"/>
-      <path d="M -0.5 -1.5 L 0.5 -1.5 L 0.5 1.5 L -0.5 1.5 Z" fill="url(#coexistGradient)" opacity="0.8"/>
-    </g>
+  <!-- Cercle de fond minimaliste -->
+  <circle cx="100" cy="100" r="85" fill="url(#minimalGradient)" filter="url(#subtleShadow)"/>
+  
+  <!-- Symboles religieux unifiés dans un style minimaliste -->
+  
+  <!-- Croix (en haut) -->
+  <g transform="translate(100, 50)">
+    <rect x="-1.5" y="-10" width="3" height="20" fill="#FFFFFF" opacity="0.95"/>
+    <rect x="-6" y="-1.5" width="12" height="3" fill="#FFFFFF" opacity="0.95"/>
   </g>
   
-  <!-- Texte COEXIST -->
-  <g transform="translate(120, 50)">
-    <text x="0" y="-15" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="url(#textGradient)">
-      COEXIST
-    </text>
-    <text x="0" y="8" font-family="Arial, sans-serif" font-size="12" font-weight="500" fill="url(#coexistGradient)" opacity="0.8">
-      .AI
-    </text>
-    
-    <!-- Ligne décorative sous le texte -->
-    <rect x="-5" y="15" width="90" height="1.5" rx="0.75" fill="url(#coexistGradient)" opacity="0.4"/>
+  <!-- Étoile de David (en bas à gauche) -->
+  <g transform="translate(50, 150)">
+    <path d="M 0,-8 L -6.93,4 L 6.93,4 Z" fill="#FFFFFF" opacity="0.95"/>
+    <path d="M 0,8 L -6.93,-4 L 6.93,-4 Z" fill="#FFFFFF" opacity="0.95"/>
   </g>
   
-  <!-- Éléments décoratifs subtils -->
-  <g opacity="0.3">
-    <!-- Petits points autour du logo -->
-    <circle cx="20" cy="20" r="2" fill="url(#coexistGradient)"/>
-    <circle cx="260" cy="20" r="2" fill="url(#coexistGradient)"/>
-    <circle cx="20" cy="80" r="2" fill="url(#coexistGradient)"/>
-    <circle cx="260" cy="80" r="2" fill="url(#coexistGradient)"/>
-    
-    <!-- Lignes de connexion décoratives -->
-    <path d="M 20 20 Q 140 10 260 20" stroke="url(#coexistGradient)" stroke-width="0.5" fill="none" opacity="0.2"/>
-    <path d="M 20 80 Q 140 90 260 80" stroke="url(#coexistGradient)" stroke-width="0.5" fill="none" opacity="0.2"/>
+  <!-- Croissant (en bas à droite) -->
+  <g transform="translate(150, 150)">
+    <path d="M -5,0 A 5,5 0 1,1 5,0 A 3.5,3.5 0 1,0 -3.5,0 Z" fill="#FFFFFF" opacity="0.95"/>
   </g>
+  
+  <!-- Cœur central minimaliste -->
+  <g transform="translate(100, 100)">
+    <path d="M 0,-10 C -5,-13 -10,-8 -10,-3 C -10,1 -5,6 0,11 C 5,6 10,1 10,-3 C 10,-8 5,-13 0,-10 Z" 
+          fill="#FFFFFF" opacity="0.9"/>
+  </g>
+  
+  <!-- Points de connexion pour l'unité -->
+  <g opacity="0.4">
+    <circle cx="100" cy="100" r="1.5" fill="#FFFFFF"/>
+    <circle cx="100" cy="50" r="1" fill="#FFFFFF"/>
+    <circle cx="50" cy="150" r="1" fill="#FFFFFF"/>
+    <circle cx="150" cy="150" r="1" fill="#FFFFFF"/>
+  </g>
+  
+  <!-- Lignes de connexion subtiles -->
+  <g opacity="0.2" stroke="#FFFFFF" stroke-width="1" fill="none">
+    <line x1="100" y1="100" x2="100" y2="50"/>
+    <line x1="100" y1="100" x2="50" y2="150"/>
+    <line x1="100" y1="100" x2="150" y2="150"/>
+  </g>
+  
+  <!-- Texte minimaliste -->
+  <text x="100" y="190" text-anchor="middle" font-family="'Arial', sans-serif" font-size="12" font-weight="300" fill="#FFFFFF" opacity="0.7" letter-spacing="3px">
+    COEXIST
+  </text>
 </svg>
-
-
-

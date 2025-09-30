@@ -9,10 +9,16 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/coexist-icon-minimal.svg",
+      "src": "/coexist-logo-modern.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/coexist-logo-unity.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
     },
     {
       "src": "/icon-192.png",
@@ -38,7 +44,7 @@
       "url": "/",
       "icons": [
         {
-          "src": "/coexist-icon-minimal.svg",
+          "src": "/coexist-logo-modern.svg",
           "sizes": "96x96"
         }
       ]
@@ -50,7 +56,7 @@
       "url": "/test-comparison",
       "icons": [
         {
-          "src": "/coexist-icon-minimal.svg",
+          "src": "/coexist-logo-modern.svg",
           "sizes": "96x96"
         }
       ]
@@ -62,7 +68,7 @@
       "url": "/about",
       "icons": [
         {
-          "src": "/coexist-icon-minimal.svg",
+          "src": "/coexist-logo-modern.svg",
           "sizes": "96x96"
         }
       ]

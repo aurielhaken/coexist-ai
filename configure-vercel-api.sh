@@ -1,0 +1,53 @@
+#!/bin/bash
+
+echo "🚀 Configuration de l'API sur Vercel pour coexist-ai.com"
+echo "======================================================="
+
+echo ""
+echo "📋 Instructions pour configurer l'API sur Vercel :"
+echo ""
+
+echo "1️⃣  Méthode via Dashboard Vercel (Recommandée) :"
+echo "   • Allez sur https://vercel.com/spot-me1/coexist-ai/settings/environment-variables"
+echo "   • Ajoutez ces variables d'environnement :"
+echo ""
+echo "   Variable: OPENAI_API_KEY"
+echo "   Valeur: [VOTRE_CLE_API_OPENAI]"
+echo "   Environnements: Production, Preview, Development"
+echo ""
+echo "   Variable: NEXT_PUBLIC_DEMO_MODE"
+echo "   Valeur: false"
+echo "   Environnements: Production, Preview, Development"
+echo ""
+
+echo "2️⃣  Méthode via CLI Vercel :"
+echo "   • Exécutez ces commandes :"
+echo ""
+echo "   npx vercel env add OPENAI_API_KEY"
+echo "   # Entrez votre clé API quand demandé"
+echo ""
+echo "   npx vercel env add NEXT_PUBLIC_DEMO_MODE"
+echo "   # Entrez 'false' quand demandé"
+echo ""
+
+echo "3️⃣  Redéployer l'application :"
+echo "   npx vercel --prod"
+echo ""
+
+echo "✅ Une fois configuré :"
+echo "   • L'IA sur coexist-ai.com donnera de vraies réponses"
+echo "   • Plus de mode démo avec réponses génériques"
+echo "   • Fonctionnement complet de l'intelligence artificielle"
+echo ""
+
+echo "🔑 Pour obtenir une clé API OpenAI :"
+echo "   • https://platform.openai.com/api-keys"
+echo "   • Créez une nouvelle clé secrète"
+echo "   • Copiez-la (commence par 'sk-')"
+echo ""
+
+echo "🎯 Test après configuration :"
+echo "   • Allez sur https://coexist-ai.com"
+echo "   • Posez une question comme 'J'ai peur de la guerre'"
+echo "   • L'IA devrait donner une réponse unique et personnalisée"
+echo ""

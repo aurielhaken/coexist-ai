@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Send, Loader2 } from "lucide-react";
+import { Send, Loader2, Volume2, VolumeX } from "lucide-react";
+import VoiceInterface, { useTextToSpeech } from "./VoiceInterface";
+import VoiceHelp from "./VoiceHelp";
 
 interface Message {
   id: string;
@@ -21,6 +23,21 @@ export default function Chat() {
   ]);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { speak, stop, isSpeaking } = useTextToSpeech();
+
+  // Fonction pour gérer la transcription vocale
+  const handleVoiceTranscript = (transcript: string) => {
+    setInputMessage(transcript);
+  };
+
+  // Fonction pour lire un message spécifique
+  const handleSpeakMessage = (content: string) => {
+    if (isSpeaking) {
+      stop();
+    } else {
+      speak(content);
+    }
+  };
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,6 +78,11 @@ export default function Chat() {
       };
 
       setMessages(prev => [...prev, aiMessage]);
+      
+      // Lire automatiquement la réponse de l'IA
+      setTimeout(() => {
+        speak(data.response);
+      }, 500); // Petit délai pour que l'interface se mette à jour
     } catch (error) {
       console.error("Erreur:", error);
       const errorMessage: Message = {
@@ -105,12 +127,29 @@ export default function Chat() {
                 }`}
               >
                 <p className="text-sm">{message.content}</p>
-                <p className="text-xs opacity-70 mt-1">
-                  {message.timestamp.toLocaleTimeString("fr-FR", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </p>
+                <div className="flex items-center justify-between mt-1">
+                  <p className="text-xs opacity-70">
+                    {message.timestamp.toLocaleTimeString("fr-FR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                  
+                  {/* Bouton de lecture pour les messages de l'IA */}
+                  {!message.isUser && (
+                    <button
+                      onClick={() => handleSpeakMessage(message.content)}
+                      className="ml-2 p-1 rounded-full hover:bg-gray-200 transition-colors"
+                      title={isSpeaking ? "Arrêter la lecture" : "Lire le message"}
+                    >
+                      {isSpeaking ? (
+                        <VolumeX className="w-3 h-3" />
+                      ) : (
+                        <Volume2 className="w-3 h-3" />
+                      )}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))
@@ -135,18 +174,43 @@ export default function Chat() {
             type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            placeholder="Tapez votre message..."
+            placeholder="Tapez votre message ou utilisez la reconnaissance vocale..."
             className="flex-1 px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
             disabled={isLoading}
           />
+          
+          {/* Interface vocale */}
+          <VoiceInterface
+            onTranscript={handleVoiceTranscript}
+            disabled={isLoading}
+          />
+          
           <button
             type="submit"
             disabled={!inputMessage.trim() || isLoading}
             className="px-4 py-2 bg-brand-500 text-white rounded-md hover:bg-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            title="Envoyer le message"
           >
             <Send className="w-4 h-4" />
           </button>
         </form>
+        
+        {/* Indicateurs d'état vocal */}
+        <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+          <div className="flex items-center space-x-4">
+            <span>🎤 Reconnaissance vocale disponible</span>
+            <span>🔊 Lecture automatique activée</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            {isSpeaking && (
+              <div className="flex items-center space-x-1 text-brand-600">
+                <div className="w-2 h-2 bg-brand-500 rounded-full animate-pulse"></div>
+                <span>Lecture en cours...</span>
+              </div>
+            )}
+            <VoiceHelp />
+          </div>
+        </div>
       </div>
     </div>
   );

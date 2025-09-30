@@ -45,30 +45,28 @@ export function Logo({ size = 'md', className = '' }: LogoProps) {
 export function LogoFull({ className = '' }: { className?: string }) {
   return (
     <div className={`w-48 h-48 ${className}`}>
-      <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Gradient Definitions */}
+      <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          {/* Gradient paisible et humain */}
-          <linearGradient id="humanGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style={{stopColor:'#4A90E2', stopOpacity:1}} />
-            <stop offset="50%" style={{stopColor:'#7ED321', stopOpacity:1}} />
-            <stop offset="100%" style={{stopColor:'#F5A623', stopOpacity:1}} />
+          {/* Gradient moderne */}
+          <linearGradient id="modernGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style={{stopColor:'#667eea', stopOpacity:1}} />
+            <stop offset="50%" style={{stopColor:'#764ba2', stopOpacity:1}} />
+            <stop offset="100%" style={{stopColor:'#f093fb', stopOpacity:1}} />
           </linearGradient>
           
-          {/* Heart gradient */}
-          <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style={{stopColor:'#F87171', stopOpacity:1}} />
-            <stop offset="100%" style={{stopColor:'#EF4444', stopOpacity:1}} />
-          </linearGradient>
+          {/* Gradient pour l'humanité */}
+          <radialGradient id="humanGradient" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style={{stopColor:'#ff9a9e', stopOpacity:0.8}} />
+            <stop offset="100%" style={{stopColor:'#fecfef', stopOpacity:0.6}} />
+          </radialGradient>
           
-          {/* Dove gradient */}
-          <linearGradient id="doveGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style={{stopColor:'#FFFFFF', stopOpacity:1}} />
-            <stop offset="100%" style={{stopColor:'#F3F4F6', stopOpacity:1}} />
-          </linearGradient>
+          {/* Ombre moderne */}
+          <filter id="modernShadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="8" stdDeviation="8" floodColor="rgba(0,0,0,0.15)"/>
+          </filter>
           
-          {/* Glow effect */}
-          <filter id="glow">
+          {/* Effet de lueur */}
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
             <feMerge> 
               <feMergeNode in="coloredBlur"/>
@@ -77,53 +75,56 @@ export function LogoFull({ className = '' }: { className?: string }) {
           </filter>
         </defs>
         
-        {/* Background circle with subtle gradient */}
-        <circle cx="100" cy="100" r="95" fill="url(#humanGradient)" opacity="0.1"/>
+        {/* Fond principal avec gradient moderne */}
+        <circle cx="100" cy="100" r="90" fill="url(#modernGradient)" filter="url(#modernShadow)"/>
         
-        {/* Cercle principal avec icône humaine */}
-        <circle cx="100" cy="100" r="60" fill="url(#humanGradient)" opacity="0.9" filter="url(#glow)"/>
+        {/* Anneau intérieur pour la profondeur */}
+        <circle cx="100" cy="100" r="75" fill="none" stroke="#FFFFFF" strokeWidth="2" opacity="0.3"/>
         
-        {/* Icône humaine stylisée au centre */}
+        {/* Symboles religieux stylisés et unifiés */}
+        
+        {/* Croix moderne (en haut) */}
+        <g transform="translate(100, 60)">
+          <rect x="-2" y="-12" width="4" height="24" fill="#FFFFFF" rx="2" opacity="0.9"/>
+          <rect x="-8" y="-2" width="16" height="4" fill="#FFFFFF" rx="2" opacity="0.9"/>
+        </g>
+        
+        {/* Étoile de David moderne (en bas à gauche) */}
+        <g transform="translate(60, 140)">
+          <path d="M 0,-10 L -8.66,5 L 8.66,5 Z" fill="#FFFFFF" opacity="0.9"/>
+          <path d="M 0,10 L -8.66,-5 L 8.66,-5 Z" fill="#FFFFFF" opacity="0.9"/>
+        </g>
+        
+        {/* Croissant moderne (en bas à droite) */}
+        <g transform="translate(140, 140)">
+          <path d="M -6,0 A 6,6 0 1,1 6,0 A 4.5,4.5 0 1,0 -4.5,0 Z" fill="#FFFFFF" opacity="0.9"/>
+        </g>
+        
+        {/* Cœur central symbolisant l'humanité */}
         <g transform="translate(100, 100)">
-          {/* Corps humain stylisé */}
-          <path d="M-15,-25 C-15,-25 -15,-15 -15,-10 C-15,-5 -12,0 -8,0 C-4,0 0,-5 0,-10 C0,-15 4,-15 4,-25 C4,-35 0,-40 -8,-40 C-16,-40 -20,-35 -20,-25 C-20,-15 -16,-15 -15,-25 Z" 
-                fill="white" opacity="0.95"/>
+          <path d="M 0,-12 C -6,-16 -12,-10 -12,-4 C -12,2 -6,8 0,14 C 6,8 12,2 12,-4 C 12,-10 6,-16 0,-12 Z" 
+                fill="url(#humanGradient)" filter="url(#glow)" opacity="0.95"/>
           
-          {/* Bras ouverts (paix) */}
-          <path d="M-25,-20 C-30,-15 -30,-10 -25,-5 C-20,0 -15,5 -10,8 C-5,12 0,12 5,8 C10,5 15,0 20,-5 C25,-10 25,-15 20,-20 C15,-25 10,-25 5,-20 C0,-20 -5,-20 -10,-20 Z" 
-                fill="white" opacity="0.9"/>
-          
-          {/* Cœur au centre */}
-          <path d="M-4,-15 C-7,-18 -10,-18 -13,-15 C-16,-12 -16,-8 -13,-5 C-10,-2 -7,-2 -4,0 C-1,-2 2,-2 5,-5 C8,-8 8,-12 5,-15 C2,-18 -1,-18 -4,-15 Z" 
-                fill="#E74C3C" opacity="0.8"/>
-          
-          {/* Lignes de paix (ondes) */}
-          <circle cx="0" cy="0" r="35" fill="none" stroke="white" strokeWidth="2" opacity="0.3"/>
-          <circle cx="0" cy="0" r="45" fill="none" stroke="white" strokeWidth="1" opacity="0.2"/>
+          {/* Main stylisée pour l'aide mutuelle */}
+          <g transform="scale(0.8)">
+            <path d="M -6,4 C -6,2 -4,0 -2,0 C 0,0 2,2 2,4 C 2,4 4,3 6,3 C 8,3 8,5 8,7 C 8,9 6,11 4,11 C 2,11 0,9 0,7 C -2,9 -4,11 -6,11 C -8,11 -8,9 -8,7 C -8,5 -8,4 -6,4 Z" 
+                  fill="#FFFFFF" opacity="0.8"/>
+          </g>
         </g>
         
-        {/* Éléments décoratifs paisibles autour */}
-        <g opacity="0.6">
-          {/* Feuilles de paix */}
-          <path d="M30,30 C35,25 40,25 45,30 C50,35 45,40 40,38 C35,36 30,34 30,30 Z" fill="#27AE60"/>
-          <path d="M170,30 C175,25 180,25 185,30 C190,35 185,40 180,38 C175,36 170,34 170,30 Z" fill="#27AE60"/>
-          <path d="M30,170 C35,165 40,165 45,170 C50,175 45,180 40,178 C35,176 30,174 30,170 Z" fill="#27AE60"/>
-          <path d="M170,170 C175,165 180,165 185,170 C190,175 185,180 180,178 C175,176 170,174 170,170 Z" fill="#27AE60"/>
-          
-          {/* Oiseaux de paix */}
-          <path d="M50,50 C60,40 70,40 80,50" stroke="#3498DB" strokeWidth="2" fill="none"/>
-          <path d="M120,50 C130,40 140,40 150,50" stroke="#3498DB" strokeWidth="2" fill="none"/>
-          <path d="M50,150 C60,140 70,140 80,150" stroke="#3498DB" strokeWidth="2" fill="none"/>
-          <path d="M120,150 C130,140 140,140 150,150" stroke="#3498DB" strokeWidth="2" fill="none"/>
+        {/* Motifs géométriques modernes */}
+        <g opacity="0.2">
+          {/* Triangles d'harmonie */}
+          <polygon points="100,20 105,35 95,35" fill="#FFFFFF"/>
+          <polygon points="20,100 35,105 35,95" fill="#FFFFFF"/>
+          <polygon points="100,180 95,165 105,165" fill="#FFFFFF"/>
+          <polygon points="180,100 165,95 165,105" fill="#FFFFFF"/>
         </g>
         
-        {/* Lignes de connexion paisibles */}
-        <g opacity="0.4">
-          <path d="M 30 30 Q 100 20 170 30" stroke="url(#humanGradient)" strokeWidth="1" fill="none"/>
-          <path d="M 30 170 Q 100 180 170 170" stroke="url(#humanGradient)" strokeWidth="1" fill="none"/>
-          <path d="M 30 30 Q 20 100 30 170" stroke="url(#humanGradient)" strokeWidth="1" fill="none"/>
-          <path d="M 170 30 Q 180 100 170 170" stroke="url(#humanGradient)" strokeWidth="1" fill="none"/>
-        </g>
+        {/* Texte moderne */}
+        <text x="100" y="190" textAnchor="middle" fontFamily="Arial, sans-serif" fontSize="14" fontWeight="300" fill="#FFFFFF" opacity="0.8" letterSpacing="2px">
+          COEXIST
+        </text>
       </svg>
     </div>
   );

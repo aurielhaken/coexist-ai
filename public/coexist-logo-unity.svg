@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradients pour les symboles religieux -->
+    <linearGradient id="crossGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4A90E2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#357ABD;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="starGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F39C12;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E67E22;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="crescentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#27AE60;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#229954;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Gradient pour l'humanité -->
+    <radialGradient id="humanityGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#E74C3C;stop-opacity:0.8" />
+      <stop offset="50%" style="stop-color:#F39C12;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#3498DB;stop-opacity:0.4" />
+    </radialGradient>
+    
+    <!-- Ombre portée -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="2" dy="4" stdDeviation="3" flood-color="rgba(0,0,0,0.3)"/>
+    </filter>
+  </defs>
+  
+  <!-- Cercle de fond principal -->
+  <circle cx="100" cy="100" r="95" fill="url(#humanityGradient)" filter="url(#shadow)"/>
+  
+  <!-- Anneau extérieur pour l'unité -->
+  <circle cx="100" cy="100" r="85" fill="none" stroke="#FFFFFF" stroke-width="3" opacity="0.8"/>
+  
+  <!-- Croix chrétienne (en haut) -->
+  <g transform="translate(100, 45)">
+    <!-- Croix verticale -->
+    <rect x="-3" y="-15" width="6" height="30" fill="url(#crossGradient)" rx="3"/>
+    <!-- Croix horizontale -->
+    <rect x="-10" y="-3" width="20" height="6" fill="url(#crossGradient)" rx="3"/>
+  </g>
+  
+  <!-- Étoile de David (en bas à gauche) -->
+  <g transform="translate(45, 140) rotate(30)">
+    <path d="M 0,-12 L -10.39,6 L 10.39,6 Z" fill="url(#starGradient)"/>
+    <path d="M 0,12 L -10.39,-6 L 10.39,-6 Z" fill="url(#starGradient)"/>
+  </g>
+  
+  <!-- Croissant islamique (en bas à droite) -->
+  <g transform="translate(155, 140)">
+    <!-- Croissant principal -->
+    <path d="M -8,0 A 8,8 0 1,1 8,0 A 6,6 0 1,0 -6,0 Z" fill="url(#crescentGradient)"/>
+    <!-- Étoile à 5 branches -->
+    <g transform="translate(12, 0)">
+      <path d="M 0,-6 L 1.76,-1.85 L 5.71,-1.85 L 2.47,0.85 L 3.53,4.85 L 0,2.85 L -3.53,4.85 L -2.47,0.85 L -5.71,-1.85 L -1.76,-1.85 Z" fill="#FFFFFF"/>
+    </g>
+  </g>
+  
+  <!-- Symbole central de l'humanité - Cœur stylisé -->
+  <g transform="translate(100, 100)">
+    <path d="M 0,-15 C -8,-20 -15,-12 -15,-5 C -15,5 -8,12 0,18 C 8,12 15,5 15,-5 C 15,-12 8,-20 0,-15 Z" 
+          fill="#FFFFFF" opacity="0.9"/>
+    <!-- Main tendue (symbole d'aide et d'unité) -->
+    <path d="M -8,5 C -8,2 -6,0 -4,0 C -2,0 0,2 0,5 C 2,5 4,3 6,3 C 8,3 10,5 10,8 C 10,12 8,15 6,15 C 4,15 2,12 0,10 C -2,12 -4,15 -6,15 C -8,15 -10,12 -10,8 C -10,5 -8,5 -8,5 Z" 
+          fill="#FFFFFF" opacity="0.7"/>
+  </g>
+  
+  <!-- Motifs décoratifs pour l'harmonie -->
+  <g opacity="0.3">
+    <!-- Cercles d'harmonie -->
+    <circle cx="70" cy="70" r="3" fill="#FFFFFF"/>
+    <circle cx="130" cy="70" r="3" fill="#FFFFFF"/>
+    <circle cx="70" cy="130" r="3" fill="#FFFFFF"/>
+    <circle cx="130" cy="130" r="3" fill="#FFFFFF"/>
+  </g>
+  
+  <!-- Texte "COEXIST" -->
+  <text x="100" y="190" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#FFFFFF" opacity="0.9">
+    COEXIST
+  </text>
+</svg>
