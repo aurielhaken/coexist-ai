@@ -74,7 +74,7 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <Header />
-        <main className="max-w-3xl mx-auto px-4 py-6">
+        <main>
           {children}
         </main>
       </body>

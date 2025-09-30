@@ -46,28 +46,36 @@ export default function ChatPage() {
     setInputValue('');
     setIsLoading(true);
 
-    // Simulation de réponse (pas d'API pour l'instant)
-    setTimeout(() => {
-      const responses = [
-        "Je comprends votre situation. Pouvez-vous me donner plus de détails sur ce qui vous préoccupe ?",
-        "Il est important de rester calme dans cette situation. Essayons de voir les choses sous un angle différent.",
-        "La communication est la clé pour résoudre les conflits. Que ressentez-vous actuellement ?",
-        "Je suis là pour vous aider à trouver une solution pacifique. Décrivez-moi la situation plus précisément.",
-        "Chaque conflit peut être transformé en opportunité de croissance. Que pensez-vous de cette approche ?"
-      ];
-      
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: inputValue }),
+      });
+
+      const data = await response.json();
+
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: randomResponse,
+        content: data.response || 'Je suis désolé, je ne peux pas répondre pour le moment.',
         isUser: false,
         timestamp: new Date(),
       };
 
       setMessages(prev => [...prev, aiMessage]);
+    } catch (error) {
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: 'Une erreur est survenue. Veuillez réessayer.',
+        isUser: false,
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (
