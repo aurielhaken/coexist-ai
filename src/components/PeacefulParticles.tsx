@@ -1,94 +1,126 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface Particle {
-  id: number;
   x: number;
   y: number;
+  vx: number;
+  vy: number;
   size: number;
-  speed: number;
   opacity: number;
   color: string;
 }
 
 export default function PeacefulParticles() {
-  const [particles, setParticles] = useState<Particle[]>([]);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const particlesRef = useRef<Particle[]>([]);
+  const animationRef = useRef<number>();
 
   useEffect(() => {
-    const createParticles = () => {
-      const newParticles: Particle[] = [];
-      const colors = ['#4A90E2', '#7ED321', '#F5A623', '#9B59B6', '#E74C3C'];
-      
-      for (let i = 0; i < 20; i++) {
-        newParticles.push({
-          id: i,
-          x: Math.random() * window.innerWidth,
-          y: Math.random() * window.innerHeight,
-          size: Math.random() * 4 + 2,
-          speed: Math.random() * 0.5 + 0.1,
-          opacity: Math.random() * 0.5 + 0.2,
-          color: colors[Math.floor(Math.random() * colors.length)]
-        });
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+
+    const createParticle = (): Particle => ({
+      x: Math.random() * (canvas.width || window.innerWidth),
+      y: Math.random() * (canvas.height || window.innerHeight),
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5,
+      size: Math.random() * 3 + 1,
+      opacity: Math.random() * 0.6 + 0.2,
+      color: ['#3B82F6', '#8B5CF6', '#06B6D4', '#10B981'][Math.floor(Math.random() * 4)]
+    });
+
+    const initParticles = () => {
+      particlesRef.current = [];
+      for (let i = 0; i < 50; i++) {
+        particlesRef.current.push(createParticle());
       }
-      setParticles(newParticles);
     };
 
-    createParticles();
+    const updateParticles = () => {
+      particlesRef.current.forEach(particle => {
+        particle.x += particle.vx;
+        particle.y += particle.vy;
 
-    const animateParticles = () => {
-      setParticles(prevParticles => 
-        prevParticles.map(particle => ({
-          ...particle,
-          y: particle.y - particle.speed,
-          x: particle.x + Math.sin(Date.now() * 0.001 + particle.id) * 0.5,
-          opacity: Math.sin(Date.now() * 0.002 + particle.id) * 0.3 + 0.4
-        }))
-      );
+        // Rebond sur les bords
+        if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
+        if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
+
+        // Garder dans les limites
+        particle.x = Math.max(0, Math.min(canvas.width, particle.x));
+        particle.y = Math.max(0, Math.min(canvas.height, particle.y));
+      });
     };
 
-    const interval = setInterval(animateParticles, 50);
-    return () => clearInterval(interval);
+    const drawParticles = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      particlesRef.current.forEach(particle => {
+        ctx.save();
+        ctx.globalAlpha = particle.opacity;
+        ctx.fillStyle = particle.color;
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+
+      // Dessiner des connexions entre particules proches
+      particlesRef.current.forEach((particle, i) => {
+        particlesRef.current.slice(i + 1).forEach(otherParticle => {
+          const dx = particle.x - otherParticle.x;
+          const dy = particle.y - otherParticle.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < 100) {
+            ctx.save();
+            ctx.globalAlpha = (100 - distance) / 100 * 0.1;
+            ctx.strokeStyle = particle.color;
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(particle.x, particle.y);
+            ctx.lineTo(otherParticle.x, otherParticle.y);
+            ctx.stroke();
+            ctx.restore();
+          }
+        });
+      });
+    };
+
+    const animate = () => {
+      updateParticles();
+      drawParticles();
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    resizeCanvas();
+    initParticles();
+    animate();
+
+    window.addEventListener('resize', resizeCanvas);
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      {particles.map(particle => (
-        <div
-          key={particle.id}
-          className="absolute rounded-full animate-pulse"
-          style={{
-            left: `${particle.x}px`,
-            top: `${particle.y}px`,
-            width: `${particle.size}px`,
-            height: `${particle.size}px`,
-            backgroundColor: particle.color,
-            opacity: particle.opacity,
-            transform: 'translate(-50%, -50%)',
-            transition: 'all 0.1s ease-out'
-          }}
-        />
-      ))}
-      
-      {/* Effet de gradient de fond */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-green-50/20 to-orange-50/30" />
-      
-      {/* Lignes de connexion paisibles */}
-      <svg className="absolute inset-0 w-full h-full" style={{ zIndex: -1 }}>
-        {particles.slice(0, 5).map((particle, index) => (
-          <line
-            key={`line-${index}`}
-            x1={particle.x}
-            y1={particle.y}
-            x2={window.innerWidth / 2}
-            y2={window.innerHeight / 2}
-            stroke={particle.color}
-            strokeWidth="0.5"
-            opacity="0.1"
-            className="animate-pulse"
-          />
-        ))}
-      </svg>
-    </div>
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 pointer-events-none z-0"
+      style={{ background: 'transparent' }}
+    />
   );
 }
