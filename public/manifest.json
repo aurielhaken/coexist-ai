@@ -1,77 +1,111 @@
 {
-  "name": "COEXIST.AI - Assistant de Coexistence Pacifique",
+  "name": "COEXIST.AI - Assistant de Paix",
   "short_name": "COEXIST.AI",
   "description": "Assistant IA spécialisé dans la résolution de conflits et la promotion de la coexistence pacifique",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#3b82f6",
+  "theme_color": "#8b5cf6",
   "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "fr",
+  "categories": ["lifestyle", "health", "education", "social"],
   "icons": [
     {
-      "src": "/coexist-logo-modern.svg",
-      "sizes": "any",
+      "src": "/icon-72.svg",
+      "sizes": "72x72",
       "type": "image/svg+xml",
       "purpose": "any maskable"
     },
     {
-      "src": "/coexist-logo-unity.svg",
-      "sizes": "any",
+      "src": "/icon-96.svg",
+      "sizes": "96x96",
       "type": "image/svg+xml",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "/icon-192.png",
+      "src": "/icon-128.svg",
+      "sizes": "128x128",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-144.svg",
+      "sizes": "144x144",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-192.svg",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/icon-512.svg",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     }
   ],
-  "categories": ["education", "lifestyle", "utilities"],
-  "lang": "fr",
-  "dir": "ltr",
-  "scope": "/",
-  "prefer_related_applications": false,
+  "screenshots": [
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
   "shortcuts": [
     {
-      "name": "Nouveau Chat",
+      "name": "Méditation",
+      "short_name": "Méditation",
+      "description": "Accéder aux méditations guidées",
+      "url": "/?tab=meditation",
+      "icons": [
+        {
+          "src": "/icon-96.svg",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Chat",
       "short_name": "Chat",
-      "description": "Commencer une nouvelle conversation",
-      "url": "/",
+      "description": "Commencer une conversation",
+      "url": "/?tab=chat",
       "icons": [
         {
-          "src": "/coexist-logo-modern.svg",
+          "src": "/icon-96.svg",
           "sizes": "96x96"
         }
       ]
     },
     {
-      "name": "Test IA",
-      "short_name": "Test",
-      "description": "Tester et comparer les réponses IA",
-      "url": "/test-comparison",
+      "name": "Tableau de Bord",
+      "short_name": "Dashboard",
+      "description": "Voir vos insights",
+      "url": "/?tab=dashboard",
       "icons": [
         {
-          "src": "/coexist-logo-modern.svg",
-          "sizes": "96x96"
-        }
-      ]
-    },
-    {
-      "name": "À Propos",
-      "short_name": "À Propos",
-      "description": "En savoir plus sur COEXIST.AI",
-      "url": "/about",
-      "icons": [
-        {
-          "src": "/coexist-logo-modern.svg",
+          "src": "/icon-96.svg",
           "sizes": "96x96"
         }
       ]
     }
-  ]
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  }
 }

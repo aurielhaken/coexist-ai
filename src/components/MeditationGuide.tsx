@@ -1,94 +1,100 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Play, Pause, Volume2, Heart, Brain, Leaf } from 'lucide-react';
+import { Play, Pause, RotateCcw, Heart, Brain, Sun, Moon } from 'lucide-react';
 
 interface MeditationSession {
   id: string;
   title: string;
   description: string;
   duration: number; // en minutes
-  category: 'peace' | 'conflict' | 'mindfulness' | 'gratitude';
+  type: 'breathing' | 'loving-kindness' | 'unity' | 'gratitude' | 'body-scan';
+  icon: React.ReactNode;
   steps: string[];
 }
 
 const MEDITATION_SESSIONS: MeditationSession[] = [
   {
-    id: 'peace-breathing',
-    title: 'Respiration de Paix',
-    description: 'Une méditation simple pour calmer l\'esprit et trouver la paix intérieure',
+    id: 'breathing',
+    title: 'Respiration Consciente',
+    description: 'Technique 4-7-8 pour la relaxation profonde',
     duration: 5,
-    category: 'peace',
+    type: 'breathing',
+    icon: <Brain className="w-6 h-6" />,
     steps: [
-      'Asseyez-vous confortablement, dos droit',
-      'Fermez les yeux et respirez naturellement',
-      'Inspirez lentement en comptant jusqu\'à 4',
-      'Retenez votre souffle en comptant jusqu\'à 4',
-      'Expirez lentement en comptant jusqu\'à 6',
-      'Répétez 10 fois en vous concentrant sur la paix'
+      'Asseyez-vous confortablement, le dos droit',
+      'Inspirez par le nez en comptant jusqu\'à 4',
+      'Retenez votre souffle en comptant jusqu\'à 7',
+      'Expirez par la bouche en comptant jusqu\'à 8',
+      'Répétez ce cycle 4-5 fois'
     ]
   },
   {
-    id: 'conflict-resolution',
-    title: 'Résolution de Conflit Intérieur',
-    description: 'Une méditation pour comprendre et résoudre les conflits internes',
+    id: 'loving-kindness',
+    title: 'Méditation de l\'Amour-Bienveillant',
+    description: 'Cultiver la compassion envers soi et les autres',
     duration: 10,
-    category: 'conflict',
+    type: 'loving-kindness',
+    icon: <Heart className="w-6 h-6" />,
     steps: [
-      'Prenez une position confortable',
-      'Identifiez le conflit que vous ressentez',
-      'Visualisez les deux parties en conflit',
-      'Imaginez un pont entre elles',
-      'Envoyez de l\'amour et de la compréhension',
-      'Visualisez la résolution harmonieuse'
+      'Fermez les yeux et respirez naturellement',
+      'Dirigez l\'amour vers vous-même : "Puissé-je être en paix"',
+      'Étendez cet amour à vos proches',
+      'Incluez les personnes neutres dans votre vie',
+      'Envoyez de l\'amour même à vos "ennemis"',
+      'Embrassez tous les êtres vivants avec compassion'
     ]
   },
   {
-    id: 'gratitude-practice',
-    title: 'Pratique de Gratitude',
-    description: 'Cultiver la gratitude pour améliorer le bien-être et les relations',
+    id: 'unity',
+    title: 'Méditation de l\'Unité',
+    description: 'Sentir la connexion avec tous les êtres',
+    duration: 15,
+    type: 'unity',
+    icon: <Sun className="w-6 h-6" />,
+    steps: [
+      'Visualisez une lumière dorée dans votre cœur',
+      'Cette lumière grandit et emplit votre corps',
+      'Elle rayonne vers vos proches et amis',
+      'Elle s\'étend à votre communauté',
+      'Elle touche tous les êtres de la planète',
+      'Sentez cette unité et cette connexion profonde'
+    ]
+  },
+  {
+    id: 'gratitude',
+    title: 'Méditation de Gratitude',
+    description: 'Apprécier les bénédictions de la vie',
     duration: 8,
-    category: 'gratitude',
+    type: 'gratitude',
+    icon: <Moon className="w-6 h-6" />,
     steps: [
-      'Asseyez-vous et fermez les yeux',
-      'Respirez profondément 3 fois',
-      'Pensez à 3 choses dont vous êtes reconnaissant',
+      'Prenez trois respirations profondes',
+      'Pensez à 3 choses pour lesquelles vous êtes reconnaissant',
       'Ressentez la gratitude dans votre cœur',
-      'Envoyez cette gratitude aux autres',
-      'Remerciez-vous pour votre existence'
-    ]
-  },
-  {
-    id: 'mindful-listening',
-    title: 'Écoute Consciente',
-    description: 'Développer l\'écoute empathique pour mieux comprendre les autres',
-    duration: 7,
-    category: 'mindfulness',
-    steps: [
-      'Prenez une position d\'écoute active',
-      'Imaginez une personne avec qui vous avez des difficultés',
-      'Écoutez avec votre cœur, pas seulement vos oreilles',
-      'Essayez de comprendre ses émotions',
-      'Envoyez-lui de la compassion',
-      'Visualisez une conversation harmonieuse'
+      'Remerciez pour les défis qui vous ont fait grandir',
+      'Envoyez de la gratitude à l\'univers',
+      'Ouvrez les yeux avec un sourire'
     ]
   }
 ];
 
-export default function MeditationGuide() {
+export function MeditationGuide() {
   const [selectedSession, setSelectedSession] = useState<MeditationSession | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(0);
+  const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
     
-    if (isPlaying && selectedSession && timeRemaining > 0) {
+    if (isPlaying && timeRemaining > 0) {
       interval = setInterval(() => {
         setTimeRemaining(prev => {
           if (prev <= 1) {
             setIsPlaying(false);
+            setIsCompleted(true);
             return 0;
           }
           return prev - 1;
@@ -97,24 +103,26 @@ export default function MeditationGuide() {
     }
 
     return () => clearInterval(interval);
-  }, [isPlaying, selectedSession, timeRemaining]);
+  }, [isPlaying, timeRemaining]);
 
   const startMeditation = (session: MeditationSession) => {
     setSelectedSession(session);
+    setTimeRemaining(session.duration * 60); // Convertir en secondes
     setCurrentStep(0);
-    setTimeRemaining(session.duration * 60);
+    setIsCompleted(false);
     setIsPlaying(true);
   };
 
-  const stopMeditation = () => {
-    setIsPlaying(false);
-    setCurrentStep(0);
-    setTimeRemaining(0);
+  const togglePlayPause = () => {
+    setIsPlaying(!isPlaying);
   };
 
-  const nextStep = () => {
-    if (selectedSession && currentStep < selectedSession.steps.length - 1) {
-      setCurrentStep(prev => prev + 1);
+  const resetMeditation = () => {
+    if (selectedSession) {
+      setTimeRemaining(selectedSession.duration * 60);
+      setCurrentStep(0);
+      setIsCompleted(false);
+      setIsPlaying(false);
     }
   };
 
@@ -124,130 +132,138 @@ export default function MeditationGuide() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'peace': return <Heart className="h-5 w-5 text-red-500" />;
-      case 'conflict': return <Brain className="h-5 w-5 text-blue-500" />;
-      case 'mindfulness': return <Leaf className="h-5 w-5 text-green-500" />;
-      case 'gratitude': return <Volume2 className="h-5 w-5 text-purple-500" />;
-      default: return <Heart className="h-5 w-5 text-gray-500" />;
-    }
-  };
+  const progress = selectedSession ? ((selectedSession.duration * 60 - timeRemaining) / (selectedSession.duration * 60)) * 100 : 0;
 
-  if (selectedSession && isPlaying) {
+  if (selectedSession && !isCompleted) {
     return (
-      <div className="peaceful-card p-6 max-w-2xl mx-auto">
+      <div className="bg-white rounded-2xl shadow-lg p-6 max-w-md mx-auto">
         <div className="text-center mb-6">
-          <h2 className="peaceful-title text-2xl font-bold mb-2">
+          <div className="flex items-center justify-center mb-4">
+            <div className="p-3 bg-purple-100 rounded-full text-purple-600">
+              {selectedSession.icon}
+            </div>
+          </div>
+          <h3 className="text-xl font-semibold text-gray-800 mb-2">
             {selectedSession.title}
-          </h2>
-          <p className="peaceful-text text-gray-600 mb-4">
+          </h3>
+          <p className="text-gray-600 text-sm mb-4">
             {selectedSession.description}
           </p>
           
           {/* Timer */}
-          <div className="peaceful-badge text-lg mb-4">
-            {formatTime(timeRemaining)}
+          <div className="mb-6">
+            <div className="text-3xl font-bold text-purple-600 mb-2">
+              {formatTime(timeRemaining)}
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-1000"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
           </div>
-          
-          {/* Progress */}
-          <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
-            <div 
-              className="peaceful-gradient h-2 rounded-full transition-all duration-1000"
-              style={{ 
-                width: `${((selectedSession.duration * 60 - timeRemaining) / (selectedSession.duration * 60)) * 100}%` 
-              }}
-            />
+
+          {/* Controls */}
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <button
+              onClick={togglePlayPause}
+              className="p-3 bg-purple-500 text-white rounded-full hover:bg-purple-600 transition-colors"
+            >
+              {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
+            </button>
+            <button
+              onClick={resetMeditation}
+              className="p-3 bg-gray-200 text-gray-600 rounded-full hover:bg-gray-300 transition-colors"
+            >
+              <RotateCcw className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Current Step */}
+          <div className="bg-purple-50 rounded-lg p-4">
+            <h4 className="font-semibold text-purple-800 mb-2">
+              Étape {currentStep + 1} sur {selectedSession.steps.length}
+            </h4>
+            <p className="text-purple-700 text-sm">
+              {selectedSession.steps[currentStep]}
+            </p>
           </div>
         </div>
+      </div>
+    );
+  }
 
-        {/* Current Step */}
-        <div className="peaceful-card p-6 mb-6">
-          <h3 className="peaceful-title text-lg font-semibold mb-3">
-            Étape {currentStep + 1} sur {selectedSession.steps.length}
+  if (isCompleted) {
+    return (
+      <div className="bg-white rounded-2xl shadow-lg p-6 max-w-md mx-auto text-center">
+        <div className="mb-6">
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Heart className="w-8 h-8 text-green-600" />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-800 mb-2">
+            Méditation Terminée ! 🎉
           </h3>
-          <p className="peaceful-text text-lg leading-relaxed">
-            {selectedSession.steps[currentStep]}
+          <p className="text-gray-600">
+            Félicitations ! Vous avez complété votre session de méditation.
           </p>
         </div>
-
-        {/* Controls */}
-        <div className="flex justify-center space-x-4">
+        
+        <div className="space-y-3">
           <button
-            onClick={stopMeditation}
-            className="peaceful-button px-6 py-3 flex items-center space-x-2"
+            onClick={resetMeditation}
+            className="w-full bg-purple-500 text-white py-3 px-6 rounded-lg hover:bg-purple-600 transition-colors"
           >
-            <Pause className="h-5 w-5" />
-            <span>Arrêter</span>
+            Recommencer
           </button>
-          
-          {currentStep < selectedSession.steps.length - 1 && (
-            <button
-              onClick={nextStep}
-              className="peaceful-button px-6 py-3 flex items-center space-x-2"
-            >
-              <Play className="h-5 w-5" />
-              <span>Suivant</span>
-            </button>
-          )}
+          <button
+            onClick={() => setSelectedSession(null)}
+            className="w-full bg-gray-200 text-gray-600 py-3 px-6 rounded-lg hover:bg-gray-300 transition-colors"
+          >
+            Choisir une autre méditation
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <div className="text-center mb-8">
-        <h1 className="peaceful-title text-3xl font-bold mb-4">
-          🌸 Guide de Méditation COEXIST.AI
-        </h1>
-        <p className="peaceful-text text-lg">
-          Trouvez la paix intérieure et développez votre sagesse à travers la méditation guidée
+    <div className="bg-white rounded-2xl shadow-lg p-6">
+      <div className="text-center mb-6">
+        <h3 className="text-2xl font-semibold text-gray-800 mb-2">
+          🧘‍♀️ Méditations Guidées
+        </h3>
+        <p className="text-gray-600">
+          Choisissez une méditation pour cultiver la paix intérieure
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid gap-4">
         {MEDITATION_SESSIONS.map((session) => (
-          <div key={session.id} className="peaceful-card p-6 peaceful-hover">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                {getCategoryIcon(session.category)}
-                <h3 className="peaceful-title text-xl font-semibold">
-                  {session.title}
-                </h3>
+          <button
+            key={session.id}
+            onClick={() => startMeditation(session)}
+            className="p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-all text-left group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="p-2 bg-purple-100 rounded-lg text-purple-600 group-hover:bg-purple-200 transition-colors">
+                {session.icon}
               </div>
-              <span className="peaceful-badge">
-                {session.duration} min
-              </span>
+              <div className="flex-1">
+                <h4 className="font-semibold text-gray-800 mb-1">
+                  {session.title}
+                </h4>
+                <p className="text-sm text-gray-600 mb-2">
+                  {session.description}
+                </p>
+                <div className="flex items-center gap-2 text-xs text-purple-600">
+                  <span>⏱️ {session.duration} min</span>
+                  <span>•</span>
+                  <span>🎯 {session.steps.length} étapes</span>
+                </div>
+              </div>
             </div>
-            
-            <p className="peaceful-text mb-4">
-              {session.description}
-            </p>
-            
-            <button
-              onClick={() => startMeditation(session)}
-              className="peaceful-button w-full flex items-center justify-center space-x-2"
-            >
-              <Play className="h-5 w-5" />
-              <span>Commencer la méditation</span>
-            </button>
-          </div>
+          </button>
         ))}
-      </div>
-
-      {/* Tips */}
-      <div className="peaceful-card p-6 mt-8">
-        <h3 className="peaceful-title text-xl font-semibold mb-4">
-          💡 Conseils pour une méditation réussie
-        </h3>
-        <ul className="peaceful-text space-y-2">
-          <li>• Trouvez un endroit calme et confortable</li>
-          <li>• Éteignez votre téléphone ou mettez-le en mode avion</li>
-          <li>• Portez des vêtements confortables</li>
-          <li>• Ne vous jugez pas si votre esprit vagabonde</li>
-          <li>• Pratiquez régulièrement pour de meilleurs résultats</li>
-        </ul>
       </div>
     </div>
   );
