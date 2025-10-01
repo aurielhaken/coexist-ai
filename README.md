@@ -67,3 +67,4 @@ MIT License - Utilisez librement pour promouvoir la coexistence pacifique.
 ---
 
 *Développé avec ❤️ pour un monde plus paisible*
+🚀 **Déploiement automatique GitHub → Vercel activé !**
