@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { z } from 'zod';
 import { recordInteraction, autoImproveResponse } from '@/lib/learning-system';
-import { spiritualWisdom } from '@/lib/spiritual-wisdom';
-import { SYSTEM_PROMPT } from '@/lib/prompts';
+import { enrichWithSpiritualWisdom, getInspirationalQuote } from '@/lib/spiritual-wisdom';
+import { SYSTEM_PROMPT, MEDITATION_PROMPT, EMOTIONAL_INTELLIGENCE_PROMPT, MULTILINGUAL_RESPONSES } from '@/lib/prompts';
+import { callGemini, callOpenRouter, callClaude, callOpenAI } from '@/lib/ai-services';
+import { cacheResponse, getCachedResponse, generateCacheKey, measureResponseTime } from '@/lib/performance';
 
 // Schéma de validation pour la requête de chat
 const ChatRequestSchema = z.object({
@@ -89,12 +91,13 @@ export async function POST(request: NextRequest) {
     const { message, history, userId, language } = ChatRequestSchema.parse(body);
 
     // Vérifier les clés API disponibles
+    const geminiKey = process.env.GOOGLE_API_KEY;
     const openRouterKey = process.env.OPENROUTER_API_KEY;
     const openAIKey = process.env.OPENAI_API_KEY;
     const claudeKey = process.env.ANTHROPIC_API_KEY;
     
     // Vérifier si nous avons au moins une clé API
-    if (!openRouterKey && !openAIKey && !claudeKey) {
+    if (!geminiKey && !openRouterKey && !openAIKey && !claudeKey) {
       return NextResponse.json({
         response: `Je suis désolé, mais les services d'intelligence artificielle ne sont pas configurés actuellement. 
 
@@ -113,6 +116,22 @@ En attendant, je peux vous aider avec mes connaissances intégrées sur la paix,
     let webSearchResults: any[] = [];
     if (needsWebSearch(message)) {
       webSearchResults = await performWebSearch(message, 4);
+    }
+
+    // Vérifier le cache avant de traiter la requête
+    const cacheKey = generateCacheKey(message, language);
+    const cachedResponse = getCachedResponse(cacheKey);
+    
+    if (cachedResponse) {
+      return NextResponse.json({
+        response: cachedResponse,
+        mode: 'cached',
+        timestamp: new Date().toISOString(),
+        personalized: true,
+        language,
+        userId,
+        cached: true
+      });
     }
 
     // Construire le contexte enrichi avec la base de connaissances
@@ -142,7 +161,18 @@ En attendant, je peux vous aider avec mes connaissances intégrées sur la paix,
     let response = '';
     let mode = 'fallback';
     
-    // 1. Essayer Claude 3.5 Sonnet directement (le plus performant)
+    // 1. Essayer Gemini Pro en premier (GRATUIT - 60 req/min)
+    if (!response && geminiKey) {
+      try {
+        console.log('Tentative avec Gemini Pro (gratuit)...');
+        response = await callGemini(messages, geminiKey);
+        mode = 'gemini-pro';
+      } catch (e) {
+        console.error('Gemini failed:', e);
+      }
+    }
+
+    // 2. Essayer Claude 3.5 Sonnet directement (le plus performant)
     if (!response && claudeKey) {
       try {
         console.log('Tentative avec Claude 3.5 Sonnet...');
@@ -153,7 +183,7 @@ En attendant, je peux vous aider avec mes connaissances intégrées sur la paix,
       }
     }
 
-    // 2. Essayer OpenRouter avec les meilleurs modèles
+    // 3. Essayer OpenRouter avec les meilleurs modèles
     if (!response && openRouterKey) {
       try {
         console.log('Tentative avec OpenRouter...');
@@ -164,26 +194,18 @@ En attendant, je peux vous aider avec mes connaissances intégrées sur la paix,
       }
     }
 
-    // 3. Fallback OpenAI GPT-4o
+    // 4. Fallback OpenAI GPT-4o
     if (!response && openAIKey) {
       try {
         console.log('Tentative avec OpenAI GPT-4o...');
-        const openai = new OpenAI({ apiKey: openAIKey });
-        const completion = await openai.chat.completions.create({
-          model: "gpt-4o", // Utiliser GPT-4o au lieu de gpt-4o-mini
-          messages,
-          max_tokens: 1500, // Plus de tokens pour des réponses complètes
-          temperature: 0.3, // Plus déterministe
-          top_p: 0.95
-        });
-        response = completion.choices[0]?.message?.content || '';
+        response = await callOpenAI(messages, openAIKey);
         mode = 'openai-gpt-4o';
       } catch (e) {
         console.error('OpenAI failed:', e);
       }
     }
 
-    // 4. Si tout a échoué, retourner une erreur
+    // 5. Si tout a échoué, retourner une erreur
     if (!response) {
       console.log('Toutes les APIs ont échoué...');
       return NextResponse.json({
@@ -200,16 +222,51 @@ Je reste à votre disposition pour vous aider dès que les services seront réta
       }, { status: 503 });
     }
     
+    // Enrichir la réponse avec la sagesse spirituelle
+    let enrichedResponse = response;
+    
+    // Détecter le contexte et les émotions pour enrichir la réponse
+    const context = detectContext(message);
+    const emotions = detectEmotions(message);
+    
+    // Enrichir avec la sagesse spirituelle appropriée
+    enrichedResponse = enrichWithSpiritualWisdom(
+      response,
+      message,
+      context,
+      emotions[0] || 'neutre',
+      language,
+      'tous'
+    );
+    
+    // Ajouter une citation inspirante si approprié
+    if (shouldAddInspirationalQuote(message)) {
+      const quote = getInspirationalQuote(language);
+      enrichedResponse += `\n\n💫 **Citation inspirante** :\n"${quote}"`;
+    }
+    
+    // Ajouter des suggestions de méditation si approprié
+    if (needsMeditationSuggestion(message)) {
+      enrichedResponse += `\n\n🧘‍♀️ **Suggestion de bien-être** :\nVoulez-vous que je vous guide dans une méditation pour cultiver la paix intérieure ?`;
+    }
+
+    // Mettre en cache la réponse
+    cacheResponse(cacheKey, enrichedResponse);
+
     // Ajouter des métadonnées enrichies
     const enhancedResponse = {
-      response,
+      response: enrichedResponse,
       mode,
       timestamp: new Date().toISOString(),
       personalized: true,
       language,
       userId,
       knowledgeSources: extractKnowledgeSources(message),
-      followUpSuggestions: generateFollowUpSuggestions(message, language)
+      followUpSuggestions: generateFollowUpSuggestions(message, language),
+      spiritualWisdom: context,
+      emotions: emotions,
+      meditationSuggested: needsMeditationSuggestion(message),
+      cached: false
     };
 
     return NextResponse.json(enhancedResponse);
@@ -239,6 +296,7 @@ function buildContextualPrompt(message: string, language: string): string {
   const lowerMessage = message.toLowerCase();
   
   let contextualInfo = '';
+  let specializedPrompt = '';
   
   // Ajouter des informations contextuelles selon le message
   if (lowerMessage.includes('conflit') || lowerMessage.includes('dispute')) {
@@ -253,6 +311,16 @@ function buildContextualPrompt(message: string, language: string): string {
     contextualInfo += '\n\nContexte: Question culturelle détectée. Promouvez la compréhension interculturelle et l\'appréciation des différences.';
   }
 
+  // Détecter les besoins de méditation
+  if (lowerMessage.includes('méditation') || lowerMessage.includes('stress') || lowerMessage.includes('anxiété') || lowerMessage.includes('relaxation')) {
+    specializedPrompt += '\n\n' + MEDITATION_PROMPT;
+  }
+
+  // Détecter les besoins d'intelligence émotionnelle
+  if (lowerMessage.includes('émotion') || lowerMessage.includes('colère') || lowerMessage.includes('tristesse') || lowerMessage.includes('peur')) {
+    specializedPrompt += '\n\n' + EMOTIONAL_INTELLIGENCE_PROMPT;
+  }
+
   // Ajouter la langue de réponse
   const languageInstruction = language === 'fr' 
     ? 'Répondez en français.' 
@@ -262,23 +330,11 @@ function buildContextualPrompt(message: string, language: string): string {
     ? 'Responde en español.'
     : 'Detect and respond in the user\'s language.';
 
-  return `Tu es COEXIST.AI, un assistant IA spécialisé dans la résolution de conflits et la promotion de la coexistence pacifique. Tu es bienveillant, empathique et sage.
-
-PERSONNALITÉ:
-- Tu es chaleureux, compréhensif et non-jugeant
-- Tu utilises un langage apaisant et encourageant
-- Tu intègres des emojis appropriés (🌟, 💙, ✨, 🤝, 🕊️) pour humaniser tes réponses
-- Tu proposes des solutions pratiques et concrètes
-- Tu respectes toutes les cultures, religions et croyances
-
-STYLE DE RÉPONSE:
-- Commence souvent par une phrase d'accueil bienveillante
-- Utilise des métaphores de paix et d'harmonie
-- Propose des étapes concrètes et réalisables
-- Termine par des encouragements et de l'espoir
-- Intègre des citations inspirantes quand c'est pertinent
+  return `${SYSTEM_PROMPT}
 
 ${contextualInfo}
+
+${specializedPrompt}
 
 Instructions de langue: ${languageInstruction}
 
@@ -313,6 +369,43 @@ function extractKnowledgeSources(message: string): string[] {
   return sources;
 }
 
+function detectContext(message: string): string {
+  const lowerMessage = message.toLowerCase();
+  
+  if (lowerMessage.includes('conflit') || lowerMessage.includes('dispute')) return 'conflit';
+  if (lowerMessage.includes('religion') || lowerMessage.includes('foi')) return 'religion';
+  if (lowerMessage.includes('culture') || lowerMessage.includes('différence')) return 'culture';
+  if (lowerMessage.includes('méditation') || lowerMessage.includes('stress')) return 'bien-être';
+  if (lowerMessage.includes('émotion') || lowerMessage.includes('colère')) return 'émotion';
+  
+  return 'général';
+}
+
+function detectEmotions(message: string): string[] {
+  const lowerMessage = message.toLowerCase();
+  const emotions = [];
+  
+  if (lowerMessage.includes('colère') || lowerMessage.includes('frustré')) emotions.push('colère');
+  if (lowerMessage.includes('tristesse') || lowerMessage.includes('triste')) emotions.push('tristesse');
+  if (lowerMessage.includes('peur') || lowerMessage.includes('anxiété')) emotions.push('peur');
+  if (lowerMessage.includes('joie') || lowerMessage.includes('heureux')) emotions.push('joie');
+  if (lowerMessage.includes('gratitude') || lowerMessage.includes('reconnaissant')) emotions.push('gratitude');
+  
+  return emotions.length > 0 ? emotions : ['neutre'];
+}
+
+function shouldAddInspirationalQuote(message: string): boolean {
+  const lowerMessage = message.toLowerCase();
+  const quoteTriggers = ['inspiration', 'motivation', 'espoir', 'difficile', 'découragé', 'perdu'];
+  return quoteTriggers.some(trigger => lowerMessage.includes(trigger));
+}
+
+function needsMeditationSuggestion(message: string): boolean {
+  const lowerMessage = message.toLowerCase();
+  const meditationTriggers = ['stress', 'anxiété', 'tension', 'relaxation', 'calme', 'paix intérieure'];
+  return meditationTriggers.some(trigger => lowerMessage.includes(trigger));
+}
+
 function generateFollowUpSuggestions(message: string, language: string): string[] {
   const lowerMessage = message.toLowerCase();
   
@@ -332,6 +425,14 @@ function generateFollowUpSuggestions(message: string, language: string): string[
     ];
   }
   
+  if (lowerMessage.includes('méditation') || lowerMessage.includes('stress')) {
+    return [
+      language === 'fr' ? 'Techniques de respiration' : 'Breathing techniques',
+      language === 'fr' ? 'Méditation de l\'amour-bienveillant' : 'Loving-kindness meditation',
+      language === 'fr' ? 'Gestion du stress au quotidien' : 'Daily stress management'
+    ];
+  }
+  
   return [
     language === 'fr' ? 'Comment puis-je améliorer ma communication ?' : 'How can I improve my communication?',
     language === 'fr' ? 'Techniques de résolution de conflits' : 'Conflict resolution techniques',
@@ -339,88 +440,5 @@ function generateFollowUpSuggestions(message: string, language: string): string[
   ];
 }
 
-// Fonction supprimée - plus de mode démo
-
-// Fonction pour appeler OpenRouter avec les meilleurs modèles
-async function callOpenRouter(messages: any[], apiKey: string): Promise<string> {
-  // Modèles par ordre de préférence (du plus performant au moins performant)
-  const MODELS = [
-    'anthropic/claude-3.5-sonnet', // Le plus performant pour la compréhension
-    'openai/gpt-4o', // Excellent pour le raisonnement
-    'meta-llama/llama-3.1-70b-instruct', // Bon modèle open-source
-    'google/gemini-pro-1.5', // Alternative Google
-    'meta-llama/llama-3.1-8b-instruct' // Fallback plus léger
-  ];
-
-  for (const model of MODELS) {
-    try {
-      console.log(`Tentative avec le modèle: ${model}`);
-      
-      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-          'HTTP-Referer': 'https://coexist-ai.com',
-          'X-Title': 'COEXIST.AI',
-        },
-        body: JSON.stringify({
-          model,
-          messages,
-          temperature: 0.3, // Plus déterministe pour de meilleures réponses
-          top_p: 0.95,
-          max_tokens: 1500, // Plus de tokens pour des réponses complètes
-          stream: false
-        })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const content = data.choices?.[0]?.message?.content;
-        if (content && content.trim()) {
-          console.log(`Succès avec le modèle: ${model}`);
-          return content;
-        }
-      } else {
-        console.log(`Modèle ${model} indisponible: ${response.status}`);
-      }
-    } catch (error) {
-      console.log(`Erreur avec le modèle ${model}:`, error);
-      continue; // Essayer le modèle suivant
-    }
-  }
-  
-  throw new Error('Tous les modèles OpenRouter ont échoué');
-}
-
-// Fonction pour appeler Claude directement (si clé API Anthropic disponible)
-async function callClaude(messages: any[], apiKey: string): Promise<string> {
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
-        max_tokens: 1500,
-        temperature: 0.3,
-        messages: messages.filter(msg => msg.role !== 'system'),
-        system: messages.find(msg => msg.role === 'system')?.content || ''
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`Claude API error ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data.content?.[0]?.text || '';
-  } catch (error) {
-    console.error('Erreur Claude API:', error);
-    throw error;
-  }
-}
-
+// Note: Les fonctions callGemini, callOpenRouter, callClaude et callOpenAI 
+// sont maintenant dans le fichier ai-services.ts

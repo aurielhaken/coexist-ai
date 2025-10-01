@@ -10,6 +10,7 @@
     "export": "next build && next export"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "autoprefixer": "^10.4.21",
     "lucide-react": "^0.544.0",
     "next": "^15.6.0-canary.29",

@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import ModernFooter from "@/components/ModernFooter";
+import { InstallPrompt } from "@/components/InstallPrompt";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
     shortcut: "/icon-192.png",
     apple: "/icon-192.png",
   },
-  manifest: "/site.webmanifest",
+  manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -53,7 +54,7 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <head>
-        <link rel="manifest" href="/site.webmanifest" />
+        <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/icon-192.png" sizes="192x192" />
         <link rel="icon" href="/icon-512.png" sizes="512x512" />
         <script
@@ -79,6 +80,7 @@ export default function RootLayout({
           {children}
         </main>
         <ModernFooter />
+        <InstallPrompt />
       </body>
     </html>
   );
